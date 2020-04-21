@@ -136,6 +136,26 @@ ggsave(paste0(plotdir,'umap_marker_gene.png'),grid.arrange(grobs=plist,nrow=4),
        height=10,width=14,
        dpi=200)
 
+plotfunc2 <- function(gene,ct){
+  p <- ggplot() + geom_point(data=data.frame(umap1=u[,1],umap2=u[,2],expr = mat[gene,]),aes(x=umap1,y=umap2,col=expr),alpha=1,size=0.2) + 
+  theme_classic() + xlab('UMAP1')+ylab('UMAP2')+
+  ggtitle(paste0(ct,':',gene))+ 
+  scale_color_gradientn(colors=brewer.pal(9,'PuBu')) 
+  return(p)
+}
+tb = read.table('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/doc/Marker_Genes.csv',header=T,sep=',',as.is=T)
+for (i in seq(1,ncol(tb))){
+  print(i)
+  plist = list()
+  gvec = intersect(tb[,i], rownames(mat))
+  for (g in gvec){
+    plist[[g]] = plotfunc(g)
+  }
+  ggsave(paste0(plotdir,paste0('umap_marker_gene_',colnames(tb)[i],'.png')),grid.arrange(grobs=plist,nrow=4,ncol=4),
+       height=10,width=14,
+       dpi=200)
+}
+  
 # 
 # g = 'POU5F1'
 # pd <- sapply(unique(meta$study), function(i){
