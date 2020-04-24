@@ -8,5 +8,5 @@ pdf(paste0('./brain/atlas/result/',key,'/pca/pcvar.pdf'),height=4,width=4)
 plot(pcvar,pch=20,xlab='num.PC',ylab='variance')
 dev.off()
 source('./raisin/proc/cluster.R')
-cluster(paste0('./brain/atlas/result/',key,'/'),hclu=F,useMNN=F,useUMAP=F,usePCA=T,num.PC=15,clunum=50,k=4)
+cluster(paste0('./brain/atlas/result/',key,'/'),hclu=F,useMNN=F,useUMAP=F,usePCA=T,num.PC=15,clunum=50,k=2)
 

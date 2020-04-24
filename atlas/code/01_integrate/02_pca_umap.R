@@ -15,7 +15,7 @@ pca = d.integrated@reductions$pca@cell.embeddings
 dir.create(paste0('./brain/atlas/result/',data,'/pca/'),showWarnings = F,recursive = T)
 saveRDS(pca,paste0('./brain/atlas/result/',data,'/pca/pca.rds'))
 
-d.integrated <- RunUMAP(d.integrated, reduction = "pca", dims = 1:30)
+d.integrated <- RunUMAP(d.integrated, reduction = "pca", dims = 1:15)
 u = d.integrated@reductions$umap@cell.embeddings
 dir.create(paste0('./brain/atlas/result/',data,'/umap/'),showWarnings = F,recursive = T)
 saveRDS(u,paste0('./brain/atlas/result/',data,'/umap/umap.rds'))
