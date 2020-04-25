@@ -132,7 +132,7 @@ p <- ggplot() + geom_point(data=data.frame(umap1=u[id,1],umap2=u[id,2],study=met
   guides(color = guide_legend(override.aes = list(size = 4,alpha=1)))+
   theme(legend.spacing.x = unit(-0.1, 'cm'),legend.spacing.y = unit(-0.3, 'cm'))+
    scale_color_manual(values=getPalette(length(unique(meta$celltype))+1)[1:length(unique(meta$celltype))]) + facet_wrap(~study, ncol=6)
-ggsave(paste0(plotdir,'umap_neuronal.png'),p,height=7,width=15,dpi=200)
+ggsave(paste0(plotdir,'umap_neuronal.png'),p,height=8,width=17,dpi=200)
  
 p <- ggplot() + geom_point(data=data.frame(umap1=u[,1],umap2=u[,2],study=meta$time),aes(x=umap1,y=umap2,col=study),alpha=0.2,size=0.1) + 
   theme_classic() + xlab('UMAP1')+ylab('UMAP2')+
