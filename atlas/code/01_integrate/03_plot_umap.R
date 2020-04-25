@@ -11,7 +11,19 @@ meta = data.frame(cell = rownames(u), study = sub(':.*','',rownames(u)))
 meta = cbind(meta, 
              celltype_super = fullmeta[match(meta$cell, fullmeta$cell),'celltype_super'],
              species = fullmeta[match(meta$cell, fullmeta$cell),'species'],
-             time_super = fullmeta[match(meta$cell, fullmeta$cell),'time_super'])
+             time_super = fullmeta[match(meta$cell, fullmeta$cell),'time_super'],
+             celltype = fullmeta[match(meta$cell, fullmeta$cell),'celltype'],
+             time = fullmeta[match(meta$cell, fullmeta$cell),'time'])
+
+
+meta$time <- sapply(1:nrow(meta), function(i){
+  if (grepl('unknown',meta[i,'time'])){
+    meta[i,'time_super']
+  } else {
+    meta[i,'time']
+  }
+})
+
 
 meta[grepl('2017_Nowakowski_Science',meta$study),'species'] = 'human'
 meta[grepl('2016_Tasic_NatNeuro',meta$study),'species'] = 'mouse'
@@ -22,7 +34,7 @@ meta[grepl('2015_Zeisel_Science',meta$study),'time_super'] = 'adult'
 meta[is.na(meta$species),'species'] <- 'mouse'
 
 
-for (i in c("study",'celltype_super','species','time_super')){
+for (i in c("study",'celltype_super','celltype','species','time_super','time')){
   meta[is.na(meta[,i]),i] = 'unknown'
   tab = table(meta[,i])
   meta[,i] = paste0(meta[,i],'(',tab[match(meta[,i],names(tab))],')')    
@@ -104,7 +116,34 @@ p <- ggplot() + geom_point(data=data.frame(umap1=u[id1,1],umap2=u[id1,2],study=m
    scale_color_manual(values=getPalette(length(unique(meta$celltype_super))+1)[1:length(unique(meta$celltype_super))]) + facet_wrap(~study, ncol=6)
 ggsave(paste0(plotdir,'umap_celltype.png'),p,height=8,width=18,dpi=200)
 
+id = grep('neuronal', meta[,'celltype_super'])
+p <- ggplot() + geom_point(data=data.frame(umap1=u[id,1],umap2=u[id,2],study=meta$celltype[id]),aes(x=umap1,y=umap2,col=study),alpha=0.5,size=0.1) + 
+  theme_classic() + xlab('UMAP1')+ylab('UMAP2')+
+  theme(legend.position = 'none',legend.title = element_blank()) + 
+  guides(color = guide_legend(override.aes = list(size = 4,alpha=1)))+
+  theme(legend.spacing.x = unit(-0.1, 'cm'),legend.spacing.y = unit(-0.3, 'cm'))+
+   scale_color_manual(values=getPalette(length(unique(meta$celltype))+1)[1:length(unique(meta$celltype))]) + facet_wrap(~study, ncol=6)
+ggsave(paste0(plotdir,'umap_neuronal.png'),p,height=8,width=18,dpi=200)
 
+id = grep('neuronal', meta[,'celltype_super'])
+p <- ggplot() + geom_point(data=data.frame(umap1=u[id,1],umap2=u[id,2],study=meta$celltype[id]),aes(x=umap1,y=umap2,col=study),alpha=0.2,size=0.1) + 
+  theme_classic() + xlab('UMAP1')+ylab('UMAP2')+
+  theme(legend.position = 'none',legend.title = element_blank()) + 
+  guides(color = guide_legend(override.aes = list(size = 4,alpha=1)))+
+  theme(legend.spacing.x = unit(-0.1, 'cm'),legend.spacing.y = unit(-0.3, 'cm'))+
+   scale_color_manual(values=getPalette(length(unique(meta$celltype))+1)[1:length(unique(meta$celltype))]) + facet_wrap(~study, ncol=6)
+ggsave(paste0(plotdir,'umap_neuronal.png'),p,height=7,width=15,dpi=200)
+ 
+p <- ggplot() + geom_point(data=data.frame(umap1=u[,1],umap2=u[,2],study=meta$time),aes(x=umap1,y=umap2,col=study),alpha=0.2,size=0.1) + 
+  theme_classic() + xlab('UMAP1')+ylab('UMAP2')+
+  theme(legend.position = 'none',legend.title = element_blank()) + 
+  guides(color = guide_legend(override.aes = list(size = 4,alpha=1)))+
+  theme(legend.spacing.x = unit(-0.1, 'cm'),legend.spacing.y = unit(-0.3, 'cm'))+
+   scale_color_manual(values=getPalette(length(unique(meta$celltype))+1)[1:length(unique(meta$celltype))]) + facet_wrap(~study, ncol=5)
+ggsave(paste0(plotdir,'umap_time_detail.png'),p,height=9,width=12,dpi=200)
+
+
+### plot marker genes
 plotfunc <- function(gene){
   p <- ggplot() + geom_point(data=data.frame(umap1=u[,1],umap2=u[,2],expr = mat[gene,]),aes(x=umap1,y=umap2,col=expr),alpha=1,size=0.2) + 
   theme_classic() + xlab('UMAP1')+ylab('UMAP2')+
