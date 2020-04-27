@@ -97,6 +97,13 @@ ggsave(paste0(plotdir,'umap.png'),
        dpi=200)
 
 
+pp <- ggplot() + geom_point(data=data.frame(umap1=u[id1,1],umap2=u[id1,2],study=meta$species[id1]),aes(x=umap1,y=umap2,col=study),alpha=0.2,size=0.1) + 
+  theme_classic() + xlab('UMAP1')+ylab('UMAP2')+
+  theme(legend.position = 'right',legend.title = element_blank()) + 
+  guides(color = guide_legend(override.aes = list(size = 4,alpha=1)))+
+  theme(legend.spacing.x = unit(-0.1, 'cm'),legend.spacing.y = unit(-0.3, 'cm'))+
+   scale_color_manual(values=c('orange','steelblue')) + facet_wrap(~study)
+ggsave(paste0(plotdir,'umap_species.png'),pp,height=4,width=10,dpi=200)
 
 p <- ggplot() + geom_point(data=data.frame(umap1=u[id2,1],umap2=u[id2,2],study=meta$time_super[id2]),aes(x=umap1,y=umap2,col=study),alpha=0.2,size=0.1) + 
   theme_classic() + xlab('UMAP1')+ylab('UMAP2')+
