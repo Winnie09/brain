@@ -108,6 +108,6 @@ brain <- RunUMAP(brain, reduction = "harmony", dims = 1:20) %>%
     FindClusters(resolution = 0.5) %>% 
     identity()
 
-uamp <- brain@reductions$umap@cell.embeddings
+umap <- brain@reductions$umap@cell.embeddings
 saveRDS(umap,'/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlas/harmony/result/atlasOnly_homolog/umap.rds')
 
