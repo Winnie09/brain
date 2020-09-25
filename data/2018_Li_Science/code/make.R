@@ -7,7 +7,7 @@ conv <- c('ExN'='excitatory neurons','InN'='inhibitory neurons','Gran'= 'granule
 m <- data.frame(cell=cn,celltype=conv[ctv],time='adult',species='human',stringsAsFactors = F)
 colnames(umi2) <- cn
 saveRDS(umi2,file='/home-4/whou10@jhu.edu/scratch/Wenpin/brain/data/2018_Li_Science/proc/expr/adult.rds')
-saveRDS(m,file='/home-4/whou10@jhu.edu/scratch/Wenpin/brain/data/2018_Li_Science/proc/meta/adult.rds')
+saveRDS(m,file='/home-4/whou10@jhu.edu/scratch/Wenpin/brain/data/2018_Li_Science/proc/meta_adult.rds')
 
 load('/scratch/users/whou10@jhu.edu/Wenpin/brain/data/2018_Li_Science/raw/Sestan.fetalHuman.Psychencode.Rdata')
 umi2 <- as.matrix(count2)
@@ -28,8 +28,12 @@ cctv[grep('Pericyte',cctv)] <- 'pericytes'
 cctv[grep('NEPRGC',cctv)] <- 'neural epithelial progenitor/radial glial cells'
 cctv[grep('IPC',cctv)] <- 'intermediate progenitor cells'
 
-m <- data.frame(cell=cn,celltype=cctv,gender=meta2[,'Sex'],time=sub('PCW',' post-conception weeks',meta2[,'Age']),species='human',stringsAsFactors = F)
+m1 <- data.frame(cell=cn,celltype=cctv,gender=meta2[,'Sex'],time=sub('PCW',' post-conception weeks',meta2[,'Age']),species='human',stringsAsFactors = F)
 colnames(umi2) <- cn
 saveRDS(umi2,file='/home-4/whou10@jhu.edu/scratch/Wenpin/brain/data/2018_Li_Science/proc/expr/fetal.rds')
-saveRDS(m,file='/home-4/whou10@jhu.edu/scratch/Wenpin/brain/data/2018_Li_Science/proc/meta/fetal.rds')
+saveRDS(m1,file='/home-4/whou10@jhu.edu/scratch/Wenpin/brain/data/2018_Li_Science/proc/meta_fetal.rds')
+
+m$gender <- 'unknown'
+meta = rbind(m, m1)
+saveRDS(meta, file='/home-4/whou10@jhu.edu/scratch/Wenpin/brain/data/2018_Li_Science/proc/meta.rds')
 
