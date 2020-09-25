@@ -141,5 +141,8 @@ meta$celltype_super <- sapply(meta$celltype,function(i){
   }
 })
 
+meta$species <- 'human'
+meta$gender <- tolower(meta$gender)
+meta$gender[which(meta$gender == 'f')] <- 'female'
+meta$gender[which(meta$gender == 'm')] <- 'male'
 saveRDS(meta, '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/human/data/meta_allcell.rds')
-
