@@ -2,10 +2,9 @@ library(Seurat)
 library(harmony)
 library(data.table)
 source('/home-4/whou10@jhu.edu/scratch/Wenpin/resource/myfunc/01_function.R')
-rdir = '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/human/integrate/harmony/default/res/'
-setwd('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/data/')     
-
-mat =  readRDS(paste0(rdir, 'combine_mat.rds'))
+setwd('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/')     
+rdir = './atlasGBM/human/integrate/harmony/default/res/'
+mat =  readRDS('./atlasGBM/human/data/combine_mat.rds')
 study = sub(';.*', '', colnames(mat))
 brain <- CreateSeuratObject(counts = mat, project = "brain", min.cells = 5) %>%
     FindVariableFeatures(selection.method = "vst", nfeatures = 2000) %>% 

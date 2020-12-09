@@ -5,6 +5,9 @@ for (i in names(dlist)) {
   print(i)
   dlist[[i]] <- FindVariableFeatures(CreateSeuratObject(dlist[[i]],project=i))
 }
-d.anchors <- FindIntegrationAnchors(object.list = dlist)
+d.anchors <- FindIntegrationAnchors(object.list = dlist,
+                                    k.anchor = 10,
+                                    k.filter = 400,
+                                    k.score = 60)
 d.integrated <- IntegrateData(anchorset = d.anchors)
 saveRDS(d.integrated, paste0(rdir, 'human_atlas_GBM_Seurat.rds'))
