@@ -23,11 +23,10 @@ meta$study <- sapply(1:nrow(meta), function(i){
 })
 
 brain <- CreateSeuratObject(counts = mat, project = "atlasGBM") ## input is log-normalized => no more Normalized().
-brain@meta.data <- data.frame(brain@meta.data, normalTumor = ifelse(grepl('GBM', meta$study), 'GBM', 'atlas'))
+brain@meta.data <- data.frame(brain@meta.data, meta, normalTumor = ifelse(grepl('GBM', meta$study), 'GBM', 'atlas'))
 brain.ls <- SplitObject(brain, split.by = 'study')
 
 for(i in 1:length(brain.ls)){
-    brain.ls[[i]] <- CreateSeuratObject(brain.ls[[i]])
     brain.ls[[i]] <- FindVariableFeatures(brain.ls[[i]],selection.method = "vst", nfeatures = nfeatures)
     print(i)
 }
