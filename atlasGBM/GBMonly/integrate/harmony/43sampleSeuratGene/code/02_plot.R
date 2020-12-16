@@ -1,6 +1,6 @@
 setwd('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/')
-pdir <- './GBMonly/integrate/harmony/default/plot/'
-u <- readRDS('./GBMonly/integrate/harmony/default/res/umap.rds')
+pdir <- './GBMonly/integrate/harmony/43sampleSeuratGene/plot/'
+u <- readRDS('./GBMonly/integrate/harmony/43sampleSeuratGene/res/umap_embeddings.rds')
 meta <- readRDS('./humanGBM/data/meta_allcell.rds')
 mat <- readRDS('./humanGBM/data/combine_mat.rds')
 mat <- mat[, rownames(u)]  ###
@@ -8,11 +8,15 @@ rownames(meta) <- meta$cell  ###
 meta <- meta[rownames(u), ] ###
 
 
-for (i in c("study",'celltype_super','celltype','time_super','time')){
+print(colnames(meta))
+
+for (i in colnames(meta)[seq(2,19)]){
   meta[is.na(meta[,i]),i] = 'unknown'
   tab = table(meta[,i])
   meta[,i] = paste0(meta[,i],'(',tab[match(meta[,i],names(tab))],')')    
 }
+
+
 
 dir.create(pdir,showWarnings = F, recursive = T)
 library(ggplot2)
@@ -74,9 +78,8 @@ for (i in colnames(meta)){
   }
 }
    
-   
 ## farcet study, celltype
-for (i in  c('study','celltype')){
+for (i in  colnames(meta)[seq(2,13)){
   id = !grepl('unknown',meta[,i])  & !is.na(meta[,i])
     id <- id & (!id.gbm)
     if (sum(id) > 0){
@@ -95,10 +98,7 @@ for (i in  c('study','celltype')){
       ggsave(paste0(pdir,'umap_atlas_', i, '_facet.png'),p,height=3.5 + (length(unique(meta[,i]))/6),width=6+length(unique(meta[,i]))/3,dpi=200)
     }
 }
-
-
-
-
+   
   p <- ggplot() + geom_scattermore(data=data.frame(umap1=u[,1],umap2=u[,2],feature=ifelse(id.gbm, 'GBM', 'atlas')),aes(x=umap1,y=umap2,col=feature),alpha=0.2,size=0.1) + 
     theme_classic() + xlab('UMAP1')+ylab('UMAP2')+
     theme(legend.position = 'right',legend.title = element_blank()) + 
@@ -117,7 +117,7 @@ plotfunc <- function(gene){
   p <- ggplot() + geom_scattermore(data=data.frame(umap1=u[,1],umap2=u[,2],expr = v),aes(x=umap1,y=umap2,col=expr),alpha=1,size=0.2) + 
   theme_classic() + xlab('UMAP1')+ylab('UMAP2')+
   ggtitle(gene)+ 
-  scale_color_gradientn(colors=brewer.pal(11,'Spectral')) 
+  scale_color_gradientn(colors=brewer.pal(9,'Reds')) 
   return(p)
 }
 
@@ -152,7 +152,7 @@ plotfunc2 <- function(gene,ct){
   p <- ggplot() + geom_scattermore(data=data.frame(umap1=u[,1],umap2=u[,2],expr = v),aes(x=umap1,y=umap2,col=expr),alpha=1,size=0.2) + 
   theme_classic() + xlab('UMAP1')+ylab('UMAP2')+
   ggtitle(paste0(ct,':',gene))+ 
-  scale_color_gradientn(colors=brewer.pal(11,'Spectral')) 
+  scale_color_gradientn(colors=brewer.pal(9,'Reds')) 
   return(p)
 }
 tb = read.table('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/doc/Marker_Genes.csv',header=T,sep=',',as.is=T)

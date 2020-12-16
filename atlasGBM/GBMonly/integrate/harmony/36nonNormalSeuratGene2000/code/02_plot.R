@@ -1,20 +1,28 @@
 setwd('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/')
-pdir <- './GBMonly/integrate/harmony/default/plot/'
-u <- readRDS('./GBMonly/integrate/harmony/default/res/umap.rds')
-meta <- readRDS('./humanGBM/data/meta_allcell.rds')
-mat <- readRDS('./humanGBM/data/combine_mat.rds')
+pdir <- 'GBMonly/integrate/harmony/36nonNormalSeuratGene2000/plot/'  ####
+dir.create(pdir,showWarnings = F, recursive = T)
+u <- readRDS('GBMonly/integrate/harmony/36nonNormalSeuratGene2000/res/umap_embeddings.rds') ########
+meta <- readRDS('GBMonly/data/36nonNormal_combined_meta.rds')
+mat <- readRDS('GBMonly/data/36nonNormal_combined_log2norm_mat.rds')
+rownames(meta) <-meta$cell
 mat <- mat[, rownames(u)]  ###
-rownames(meta) <- meta$cell  ###
 meta <- meta[rownames(u), ] ###
 
+print(colnames(meta))
+#  [1] "cell"                 "study"                "Sample.ID"
+#  [4] "Age"                  "Sex"                  "Location"
+#  [7] "Pathology"            "Tumor.Grade"          "Grade"
+# [10] "MDSC"                 "Treatment"            "MGMT.status"
+# [13] "IDH.status"           "EGFR.amplification"   "CDKN2A..2G.loss"
+# [16] "PDGFRA.amplification" "TP53.mutation"        "EGFR.mutation"
+# [19] "PTEN.mutation"        "Mutation.Rate"
 
-for (i in c("study",'celltype_super','celltype','time_super','time')){
+for (i in colnames(meta)[seq(2,19)]){
   meta[is.na(meta[,i]),i] = 'unknown'
   tab = table(meta[,i])
   meta[,i] = paste0(meta[,i],'(',tab[match(meta[,i],names(tab))],')')    
 }
 
-dir.create(pdir,showWarnings = F, recursive = T)
 library(ggplot2)
 library(cowplot)
 library(RColorBrewer)
@@ -23,7 +31,7 @@ library(scattermore)
 getPalette = colorRampPalette(brewer.pal(9, "Set1"))
 
 for (i in colnames(meta)){
-  if (!i %in% c('cell', 'cell.shortname', 'species', 'Mutation.Rate')){
+  if (!i %in% c('cell', 'cell.shortname', 'Mutation.Rate')){
     print(i)
     id = !grepl('unknown',meta[,i])  & !is.na(meta[,i])
     if (sum(id) > 0){
@@ -58,10 +66,10 @@ for (i in colnames(meta)){
 }
 
 for (i in colnames(meta)){
-  if (!i %in% c('cell', 'cell.shortname', 'species', 'Mutation.Rate')){
+  if (!i %in% c('cell', 'cell.shortname', 'Mutation.Rate')){
     print(i)
     id = !grepl('unknown',meta[,i])  & !is.na(meta[,i])
-    id <- id & (!id.gbm)
+    # id <- id & (!id.gbm)
     if (sum(id) > 0){
       p <- ggplot() + geom_scattermore(data=data.frame(umap1=u[id,1],umap2=u[id,2],feature=meta[id,i]),aes(x=umap1,y=umap2,col=feature),alpha=0.2,size=0.1) + 
         theme_classic() + xlab('UMAP1')+ylab('UMAP2')+
@@ -74,11 +82,11 @@ for (i in colnames(meta)){
   }
 }
    
-   
 ## farcet study, celltype
-for (i in  c('study','celltype')){
+for (i in  colnames(meta)[seq(2,13)]){
+  print(i)
   id = !grepl('unknown',meta[,i])  & !is.na(meta[,i])
-    id <- id & (!id.gbm)
+    # id <- id & (!id.gbm) ## commented for GBMonly
     if (sum(id) > 0){
       p <- ggplot() + geom_scattermore(data=data.frame(umap1=u[id,1],umap2=u[id,2],feature=meta[id,i]),aes(x=umap1,y=umap2,col=feature),alpha=0.8,size=10) + 
         theme_classic() + xlab('UMAP1')+ylab('UMAP2')+
@@ -97,8 +105,6 @@ for (i in  c('study','celltype')){
 }
 
 
-
-
   p <- ggplot() + geom_scattermore(data=data.frame(umap1=u[,1],umap2=u[,2],feature=ifelse(id.gbm, 'GBM', 'atlas')),aes(x=umap1,y=umap2,col=feature),alpha=0.2,size=0.1) + 
     theme_classic() + xlab('UMAP1')+ylab('UMAP2')+
     theme(legend.position = 'right',legend.title = element_blank()) + 
@@ -112,15 +118,16 @@ for (i in  c('study','celltype')){
 ### plot marker genes
 plotfunc <- function(gene){
   v <-  mat[gene,]
-  v[v > quantile(v, 0.98)] <- quantile(v, 0.98)
-  v[v < quantile(v, 0.02)] <- quantile(v, 0.02)  
-  p <- ggplot() + geom_scattermore(data=data.frame(umap1=u[,1],umap2=u[,2],expr = v),aes(x=umap1,y=umap2,col=expr),alpha=1,size=0.2) + 
+  if (quantile(v, 0.98)>0){
+    v[v > quantile(v, 0.98)] <- quantile(v, 0.98)
+    v[v < quantile(v, 0.02)] <- quantile(v, 0.02)
+  }
+  p <- ggplot() + geom_scattermore(data=data.frame(umap1=u[,1],umap2=u[,2],expr = v), aes(x=umap1,y=umap2,col=expr),alpha=1,size=0.2) + 
   theme_classic() + xlab('UMAP1')+ylab('UMAP2')+
   ggtitle(gene)+ 
-  scale_color_gradientn(colors=brewer.pal(11,'Spectral')) 
+  scale_color_gradientn(colors=brewer.pal(9,'Reds')) 
   return(p)
 }
-
 
 gvec = c('CD40','CD68','CD11b','CD45',  ## microglia
          'ALDH1L1','GFAP','EAA1','GLAST','EAA2','GLT1','GLT-1', ## astrocyte
@@ -147,16 +154,18 @@ ggsave(paste0(pdir,'umap_marker_gene.png'),grid.arrange(grobs=plist,nrow=4),
 
 plotfunc2 <- function(gene,ct){
   v <-  mat[gene,]
-  v[v > quantile(v, 0.98)] <- quantile(v, 0.98)
-  v[v < quantile(v, 0.02)] <- quantile(v, 0.02)  
+  if (quantile(v, 0.98)>0){
+    v[v > quantile(v, 0.98)] <- quantile(v, 0.98)
+    v[v < quantile(v, 0.02)] <- quantile(v, 0.02)
+  }
   p <- ggplot() + geom_scattermore(data=data.frame(umap1=u[,1],umap2=u[,2],expr = v),aes(x=umap1,y=umap2,col=expr),alpha=1,size=0.2) + 
   theme_classic() + xlab('UMAP1')+ylab('UMAP2')+
   ggtitle(paste0(ct,':',gene))+ 
-  scale_color_gradientn(colors=brewer.pal(11,'Spectral')) 
+  scale_color_gradientn(colors=brewer.pal(9,'Reds')) 
   return(p)
 }
 tb = read.table('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/doc/Marker_Genes.csv',header=T,sep=',',as.is=T)
-for (i in seq(1,ncol(tb))){
+for (i in seq(1,ncol(tb))[10:ncol(tb)]){
   print(i)
   plist = list()
   gvec = intersect(tb[,i], rownames(mat))
@@ -167,4 +176,11 @@ for (i in seq(1,ncol(tb))){
        height=10,width=14,
        dpi=200)
 }
+
+## plot cluster facet
+clu = readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/integrate/harmony/36nonNormalSeuratGene2000/res/active.ident.rds')
+p <- ggplot() + geom_scattermore(data=data.frame(umap1=u[,1],umap2=u[,2],feature=as.character(clu[rownames(u)])),aes(x=umap1,y=umap2),alpha=0.5,size=1) + 
+  theme_classic() + xlab('UMAP1')+ylab('UMAP2')+
+  facet_wrap(~feature)
+ggsave(paste0(pdir,'umap_cluster_facet.png'),p,height=3.5 + (length(unique(clu))/6),width=6+length(unique(clu))/3,dpi=200)
 

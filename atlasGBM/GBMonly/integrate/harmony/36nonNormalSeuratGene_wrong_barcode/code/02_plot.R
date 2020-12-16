@@ -1,6 +1,6 @@
 setwd('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/')
-pdir <- './GBMonly/integrate/harmony/default/plot/'
-u <- readRDS('./GBMonly/integrate/harmony/default/res/umap.rds')
+pdir <- './GBMonly/integrate/harmony/seuratGene/plot/'
+u <- readRDS('./GBMonly/integrate/harmony/seuratGene/res/umap_embeddings.rds')
 meta <- readRDS('./humanGBM/data/meta_allcell.rds')
 mat <- readRDS('./humanGBM/data/combine_mat.rds')
 mat <- mat[, rownames(u)]  ###
