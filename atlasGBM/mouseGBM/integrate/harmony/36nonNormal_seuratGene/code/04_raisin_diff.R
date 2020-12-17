@@ -17,11 +17,13 @@ for (rid in sort(unique(clu))) {
   sel <- names(tab)[tab==2]
   design <- design[design[,3] %in% sel,]
   cid <- which(ctype %in% design[,1])
-  if (sum(tab > 1) == 2) {
+  if (sum(tab == 2) > 1) {
+    print(rid)
     fit <- RAISINfit(d[,cid],ctype[cid],design,testtype='paired',ncores=10)
     res <- RAISINtest(fit)[,-3]
     res <- cbind(res,within=rowMeans(fit$mean[row.names(res),design[design[,2]=='TRUE',1]]),outside=rowMeans(fit$mean[row.names(res),design[design[,2]=='FALSE',1]]))
     dir.create('atlasGBM/mouseGBM/integrate/harmony/36nonNormal_seuratGene/diff/')
     saveRDS(res,file=paste0('atlasGBM/mouseGBM/integrate/harmony/36nonNormal_seuratGene/diff/',rid,'.rds'))
+    write.csv(res,file=paste0('atlasGBM/mouseGBM/integrate/harmony/36nonNormal_seuratGene/diff/',rid,'.csv'), row.names = TRUE)
   }
 }
