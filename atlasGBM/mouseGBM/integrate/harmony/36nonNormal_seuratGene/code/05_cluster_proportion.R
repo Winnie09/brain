@@ -40,6 +40,6 @@ png(paste0(pdir, 'heatmap_cluster_proportion.png'), width = 2000, height = 1800,
 pheatmap(prop, border_color = NA,
          annotation_col = colann,
          annotation_colors = color.ls,
-         fonsize = 100)
+         fontsize = 100)
 
 dev.off()
