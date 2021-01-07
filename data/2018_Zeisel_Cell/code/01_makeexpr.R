@@ -7,5 +7,5 @@ cn <- lfile[["col_attrs/gene_names"]][]
 rownames(mat) = gn
 colnames(mat) = cn
 row.names(mat) <- gsub(' ','',row.names(mat))
-saveRDS(mat,'/home-4/whou10@jhu.edu/scratch/Wenpin/brain/data/2018_Zeisel_Cell/processed/mat.rds')
+saveRDS(mat,'/home-4/whou10@jhu.edu/scratch/Wenpin/brain/data/2018_Zeisel_Cell/proc/mat.rds')
 

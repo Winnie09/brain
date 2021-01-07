@@ -32,5 +32,5 @@ ctv[ct %in% 73] <- 'schwann cells'
 meta <- data.frame(cell=cn,celltype=ctv,time=time,location=loc,stringsAsFactors = F)
 row.names(mat) <- gsub(' ','',row.names(mat))
 mat <- mat[!duplicated(row.names(mat)),]
-saveRDS(mat,file='/home-4/whou10@jhu.edu/scratch/Wenpin/brain/data/2018_Rosenberg_Science/proc/expr.rds')
+saveRDS(mat,file='/home-4/whou10@jhu.edu/scratch/Wenpin/brain/data/2018_Rosenberg_Science/proc/count.rds')
 saveRDS(meta,file='/home-4/whou10@jhu.edu/scratch/Wenpin/brain/data/2018_Rosenberg_Science/proc/meta.rds')

@@ -1,12 +1,12 @@
 library(infercnv)
 library(here)
 setwd(here())
-cut <-0.1
+cut <- 0.1
 
 meta <- readRDS('atlasGBM/GBMonly/data/36nonNormal_combined_meta.rds')
 allp <- unique(meta$Sample.ID)
-id <- as.numeric(commandArgs(trailingOnly = T)[[1]])
-p <- allp[id]
+p <- as.character(commandArgs(trailingOnly = T)[[1]])
+
 print(p)
 anno <- read.table(paste0('atlasGBM/GBMonly/data/36nonNormal_combined_', p, '_cellanno.txt'), sep = '\t', as.is = TRUE)
 dir.create(paste0('atlasGBM/GBMonly/cnv/',p,'/cutoff', cut, '/output'), recursive = TRUE, showWarnings = FALSE)
@@ -21,4 +21,3 @@ infercnv_obj = infercnv::run(infercnv_obj,
                              cluster_by_groups=FALSE, 
                              denoise=TRUE,
                              HMM=FALSE)
-
