@@ -4,22 +4,29 @@ library(here)
 here()
 setwd(here())
 rdir <- ddir <- 'atlasGBM/mouseGBM/integrate/harmony/36nonNormal_seuratGene/res/'
-pdir <- 'atlasGBM/mouseGBM/integrate/harmony/36nonNormal_seuratGene/plot/diffusion_from_pca/'
-dir.create(pdir, recursive = T)
+pdir <- 'atlasGBM/mouseGBM/integrate/harmony/36nonNormal_seuratGene/plot/'
 
 # read in data, filtering
 seu <- readRDS(paste0(ddir, 'atlasGBM_harmony.rds'))
 expr <- seu@assays$RNA@data ## librarysize-normalized  log2-transform
-harmony <- seu@reductions$harmony@cell.embeddings
+
+len <- ncol(expr)/1e4 + 1
+exprlist <- lapply(1:len, function(i){
+  as.matrix(expr[, seq(1e4*(i-1) + 1, min(1e4*i, ncol(expr)))])
+})
+expr <- do.call(cbind, exprlist)
+str(expr)
+expr <- expr[rowMeans(expr>0.1)>0.01, ] ## nothing changed
+str(expr) ##
 
 # generate diffusion map
-dm <- DiffusionMap(harmony) ## cell by harmany features
+dm <- DiffusionMap(t(expr), )
 str(dm)
-saveRDS(dm, paste0(rdir, 'diffusionMap.obj_from_pca.rds'))
+saveRDS(dm, paste0(rdir, 'diffusionMap.obj.rds'))
 dmap <- dm@eigenvectors
 rownames(dmap) <- colnames(expr)
 str(dmap)
-saveRDS(dmap, paste0(rdir, 'diffusionMap_from_pca.rds'))
+saveRDS(dmap, paste0(rdir, 'diffusionMap.rds'))
 
 # plot diffusion map
 pdf(paste0(plotdir, '/dm_12dc.pdf'), width = 6, height = 5)
@@ -65,5 +72,4 @@ p2 <- ggplot(data = data.frame(x = dmap[,1], y = dmap[,3], clu = as.factor(clu[r
   theme_classic() + xlab('DM1') + ylab('DM3')
 gridExtra::grid.arrange(p1,p2, nrow=1)
 dev.off()
-
 
