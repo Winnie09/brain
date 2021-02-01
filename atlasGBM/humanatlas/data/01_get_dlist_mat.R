@@ -1,6 +1,3 @@
-
-
-########3
 library(Seurat)
 setwd('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/data/')     
 countfunc <- function(mat, platform='fluidigm', log2normalize = TRUE, species='human', log2.only = FALSE, genename.sep = NULL, use.homolog = FALSE, subsample = NULL) {
@@ -86,13 +83,6 @@ dlist[['2015_Darmanis_PNAS']] <- countfunc(readRDS('./2015_Darmanis_PNAS/proc/co
 dlist[['2014_Pollen_NatBiotech']] <- readRDS('./2014_Pollen_NatBiotech/proc/log2tpm.rds')
 ## 9
 dlist[['allen_human_10x']] <- countfunc(readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/data/allen_human_10x/proc/count.rds'), platform='10x', log2normalize = TRUE, species='human')
-## 10
-expr = readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/data/2020_Guo_Nature/proc/expr.rds')
-ct <- sub('_.*', '', colnames(expr))
-mat <- expr[, ct %in% c('HESC', 'AdultCerebellum', 'FetalBrain')]
-colnames(mat) <- paste0('2020_Guo_Nature:', colnames(mat))
-dlist[['2020_Guo_Nature']] <- countfunc(mat, platform = '10x', log2normalize = T, species = 'human')
-
 ## gbm
 print(Sys.time())
 gbm <- readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/GBM/data/proc/tumor/matrix_20200329/count.rds')
@@ -112,5 +102,4 @@ saveRDS(dlist, '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatlas/
 
 mat = do.call(cbind, dlist)
 saveRDS(mat, '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatlas/data/combine_mat.rds')
-
 

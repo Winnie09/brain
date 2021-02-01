@@ -1,0 +1,11 @@
+suppressMessages(library(scran))
+setwd('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/data/2018_Zeisel_Cell/')
+cnt = readRDS('./processed/qc/mat.rds')
+sce <- SingleCellExperiment(list(counts=cnt))
+# sce <- computeSumFactors(sce,BPPARAM=MulticoreParam(workers = 2))
+sce <- computeSumFactors(sce)
+sf <- sizeFactors(sce)
+normmat <- sweep(cnt,2,sf,'/')
+# normmat <- normmat[rowMeans(normmat > 0) > 0.01,]
+dir.create('./processed/scran/',showWarnings = F, recursive = T)
+saveRDS(normmat,file='./processed/scran/mat.rds')

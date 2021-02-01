@@ -11,16 +11,22 @@ dir.create(pdir, recursive = T)
 seu <- readRDS(paste0(ddir, 'atlasGBM_harmony.rds'))
 expr <- seu@assays$RNA@data ## librarysize-normalized  log2-transform
 harmony <- seu@reductions$harmony@cell.embeddings
-
-set.seed(12345)
-harmony <- harmony[sample(1:nrow(harmony), 1e4), ]
-
+study <- sub(';.*', '', rownames(harmony))
+study <- sub('_.*', '', study)
+harmony.sub <- sapply(unique(study), function(i){
+  id <- which(study ==i)
+  set.seed(12345)
+  if (length(id) > 1e3) id <- sample(id, 1e3)
+  tmp <- harmony[id, ]
+})
+harmony.sub <- do.call(rbind, harmony.sub)
+print(str(harmony.sub))
 # generate diffusion map
-dm <- DiffusionMap(harmony[1:1e3, 1:10]) ## cell by harmany features
+dm <- DiffusionMap(harmony.sub) ## cell by harmany features
 str(dm)
 saveRDS(dm, paste0(rdir, 'diffusionMap.obj_from_pca_sub.rds'))
 dmap <- dm@eigenvectors
-rownames(dmap) <- colnames(expr)
+rownames(dmap) <- rownames(harmony.sub)
 str(dmap)
 saveRDS(dmap, paste0(rdir, 'diffusionMap_from_pca_sub.rds'))
 
@@ -68,6 +74,7 @@ p2 <- ggplot(data = data.frame(x = dmap[,1], y = dmap[,3], clu = as.factor(clu[r
   theme_classic() + xlab('DM1') + ylab('DM3')
 gridExtra::grid.arrange(p1,p2, nrow=1)
 dev.off()
+
 
 
 
