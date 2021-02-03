@@ -177,10 +177,19 @@ for (i in seq(1,ncol(tb))[10:ncol(tb)]){
        dpi=200)
 }
 
+plist <- list()
+for (g in intersect(rownames(mat), c('AQP4', 'SLC1A3', 'PDGFRA', 'OLIG1', 'OLIG2', 'CX3CR1', 'GAD1', 'SLC6A1', 'SLC17A7', 'PAX6', 'SOX9', 'EOMES', 'DCX'))){
+  plist[[g]] = plotfunc(g)
+}
+ggsave(paste0(pdir,paste0('umap_marker_gene_SB.png')),grid.arrange(grobs=plist,nrow=4,ncol=4),
+         height=10,width=14,
+         dpi=200)
+
 ## plot cluster facet
 clu = readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/integrate/harmony/36nonNormalSeuratGene2000/res/active.ident.rds')
 p <- ggplot() + geom_scattermore(data=data.frame(umap1=u[,1],umap2=u[,2],feature=as.character(clu[rownames(u)])),aes(x=umap1,y=umap2),alpha=0.5,size=1) + 
   theme_classic() + xlab('UMAP1')+ylab('UMAP2')+
   facet_wrap(~feature)
 ggsave(paste0(pdir,'umap_cluster_facet.png'),p,height=3.5 + (length(unique(clu))/6),width=6+length(unique(clu))/3,dpi=200)
+
 
