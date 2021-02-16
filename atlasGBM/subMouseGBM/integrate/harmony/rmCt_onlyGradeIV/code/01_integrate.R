@@ -12,9 +12,8 @@ nfeatures <- 2000
 atlas.gbm <- readRDS('atlasGBM/mouseGBM/integrate/harmony/36nonNormal_seuratGene/res/atlasGBM_harmony_with_ct.rds')
 colnames(atlas.gbm@meta.data)[ncol(atlas.gbm@meta.data)] <- 'celltype_anno'
 ct <- atlas.gbm@meta.data[,'celltype_anno']
-id <- intersect(which(!ct %in% c('endothelial', 'microglia', 'oligodendrocyte')),
-                which(atlas.gbm@meta.data[,'Tumor.Grade'] == 'IV'))
-
+meta <- atlas.gbm@meta.data
+id <- which(!ct %in% c('endothelial', 'microglia', 'oligodendrocyte') & !meta$Tumor.Grade %in% c('I','II','III'))
 
 mat <- atlas.gbm@assays$RNA@counts[, id]
 
@@ -46,6 +45,7 @@ umap <- brain@reductions$umap@cell.embeddings
 saveRDS(umap, paste0(rdir, 'umap_embeddings.rds'))
 
 print(sessionInfo())
+
 
 
 
