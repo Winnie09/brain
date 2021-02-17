@@ -13,8 +13,7 @@ clu.sl <- c(14,15,3,18,29,31)
 active.ident <- as.character(seu@active.ident)
 names(active.ident) <- names(seu@active.ident)
 str(active.ident)
-id <- intersect(which(active.ident %in% clu.sl),
-                which(seu@meta.data[,'Tumor.Grade'] == 'IV'))
+id <- which(active.ident %in% clu.sl & !seu@meta.data[,'Tumor.Grade'] %in% c('I','II','III'))
 mat <- seu@assays$RNA@counts
 meta <- seu@meta.data[, c(-1:-3)]
 mat <- mat[, id]
