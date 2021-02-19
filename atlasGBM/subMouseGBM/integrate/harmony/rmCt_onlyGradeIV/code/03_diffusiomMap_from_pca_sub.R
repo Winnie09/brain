@@ -19,28 +19,39 @@ dm <- DiffusionMap(harmony) ## cell by harmany features
 str(dm)
 saveRDS(dm, paste0(rdir, 'diffusionMap.obj_from_pca_sub.rds'))
 dmap <- dm@eigenvectors
-rownames(dmap) <- colnames(expr)
+# rownames(dmap) <- colnames(expr)
+rownames(dmap) <- rownames(harmony)
 str(dmap)
 saveRDS(dmap, paste0(rdir, 'diffusionMap_from_pca_sub.rds'))
 
+
+
 # plot diffusion map
+ctanno.atlas <- readRDS('atlasGBM/mouseatlas/integrate/harmony/seuratGene/res/celltype_annotation.rds')
+ctanno.gbm <- readRDS('atlasGBM/GBMonly/integrate/harmony/36nonNormalSeuratGene2000/res/celltype_annotation.rds')
+ctanno <- c(ctanno.atlas, ctanno.gbm)
+
+
+pd <- reshape2::melt(dmap)
+colnames(pd) <- c('cell', 'DC', 'expr')
+pd <- cbind(pd, ctanno[match(as.character(pd[,1]), names(ctanno))])
 pdf(paste0(plotdir, '/dm_12dc.pdf'), width = 6, height = 5)
-plot(dm,1:2,
+plot(dmap,1:2,
 pch = 20) 
 dev.off()
 
 pdf(paste0(plotdir, '/dm_23dc.pdf'), width = 6, height = 5)
-plot(dm,2:3,
+plot(dmap,2:3,
 pch = 20) 
 dev.off()
 
 pdf(paste0(plotdir, '/dm_23dc.pdf'), width = 6, height = 5)
-plot(dm,c(1,3),
+plot(dmap,c(1,3),
 pch = 20) 
 dev.off()
 
 pdf(paste0(plotdir, '/dm_3dc.pdf'), width = 6, height = 6)
-plot(dm,1:3,
+plot(dmap,1:3,
 pch = 20) 
 dev.off()
 
@@ -67,6 +78,9 @@ p2 <- ggplot(data = data.frame(x = dmap[,1], y = dmap[,3], clu = as.factor(clu[r
   theme_classic() + xlab('DM1') + ylab('DM3')
 gridExtra::grid.arrange(p1,p2, nrow=1)
 dev.off()
+
+
+
 
 
 
