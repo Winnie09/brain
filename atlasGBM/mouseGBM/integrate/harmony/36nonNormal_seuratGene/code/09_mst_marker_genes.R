@@ -42,10 +42,92 @@ V(mc$MSTtree)$size <- 6
 plot(mc$MSTtree, vertex.label.color="black", edge.color = 'black', edge.width=2,label.dist = 1)
 dev.off()
 
+### ----------------------------------
+### plot sample cluster-proportion on MSTtree
+clu.tmp <- clu[grepl('GBM', names(clu))]
+sp <- sub('_.*', '', names(clu.tmp))
+prop <- sapply(seq(min(clu), max(clu)), function(i){
+  tmp <- clu.tmp[clu.tmp==i]
+  tab <- table(sub('_.*', '', names(tmp)))
+  v <- rep(0, length(unique(sp)))
+  names(v) <- unique(sp)
+  v[names(tab)] <- tab
+  v  
+})
+colnames(prop) <- seq(min(clu), max(clu))
+prop <- prop/rowSums(prop)
 
-# ord <- TSCANorder(mc,orderonly = T)
 
 
+meta <- res@meta.data
+meta <- meta[grepl('GBM', meta$study), 6:31]
+meta <- meta[,-c(3:10)]
+colnames(meta)
+meta <- meta[!duplicated(meta$study), ]
+rownames(meta) <- meta$study
+
+for (fea in setdiff(colnames(meta), c('study', 'age', 'MDSC','Mutation.Rate '))){
+  print(fea)
+  len <- length(unique(meta[,fea]))
+  if (len > 4){
+    png(paste0(pdir, 'MST_GBM_feature_',fea, '.png'), width = 900*sqrt(len), height = 900*(sqrt(len) + 1), res = 100)
+    par(mfrow = c(sqrt(len), (sqrt(len)+1)))
+  } else {
+    png(paste0(pdir, 'MST_GBM_feature_',fea, '.png'), width = 900*len, height = 900, res = 100)
+    par(mfrow = c(1,len))
+  }
+  unifea <- unique(meta[, fea])
+  unifea <- unifea[!is.na(unifea)]
+  unifea <- setdiff(unifea,'')
+  for (i in unifea){
+    id <- which(meta[,fea] == i)
+    a = prop[meta[id, 'study'], ,drop=FALSE]
+    med <- apply(a, 2, mean)
+    mst = mc$MSTtree
+    V(mst)$color <- brewer.pal(9, 'Blues')[5]
+    V(mst)$size <- med * 100
+    set.seed(12345)
+    print(plot(mst, vertex.label = ct.clu, vertex.label.color="black", edge.color = 'black', edge.width=2, main = i, label.dist = 1))
+  }
+  dev.off()
+}
+    
+
+
+
+### --------------------------------
+### plot celltype marker genes score 
+tb = read.table('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/doc/Marker_Gene_MouseCorticalLayer_Soraia.csv',header=T,sep=',',as.is=T, row.names = 1)
+tb = read.table('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/doc/Marker_Gene_Mouse_Soraia.csv',header=T,sep=',',as.is=T, row.names = 1)
+tb = read.table('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/doc/Marker_Gene_Human_Soraia.csv',header=T,sep=',',as.is=T, row.names = 1)
+
+af <- c('Marker_Gene_MouseCorticalLayer_Soraia.csv',
+        'Marker_Gene_Mouse_Soraia.csv',
+        'Marker_Gene_Human_Soraia.csv')
+for (f in af){
+  print(f)
+  tb = read.table(paste0('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/doc/', f),header=T,sep=',',as.is=T, row.names = 1)
+  for (i in seq(1,nrow(tb))){
+    print(i)
+    gvec = intersect(tb[i,], rownames(data))
+    if (length(gvec) > 0){
+      tmp <- t(sapply(gvec, function(g){
+        tapply(data[g, ], list(clu), mean)
+      }))
+      clumean <- colMeans(tmp)
+      V(mst)$color <- brewer.pal(9, 'Blues')[5]
+      V(mst)$size <- clumean * 5
+      png(paste0(pdir,paste0('MST_', sub('_.*','',sub('Marker_Gene_', '', f)), '_', rownames(tb)[i],'_markerScore.png')), width = 1800, height = 1800, res = 200)
+      set.seed(12345)
+      plot(mst, vertex.label = ct.clu, vertex.label.color="black", edge.color = 'black', edge.width=2, main = rownames(tb)[i])
+      dev.off()
+    }
+  }
+}
+  
+
+### ----------------------------
+### plot marker genes on MSTtree
 plotMST <- function(mst, gene, geneByCellExpr, clu, vertex.label = clu){
   ## mst: an igraph object. For example, mc$MSTtree where mc is the result of TSCAN::exprmclust(mat).
   ## clu: a vector or length = num.cells. cell clusters.
@@ -71,6 +153,7 @@ for (i in seq(1,ncol(tb))){
     dev.off()
   }
 }
+
 
 
 
