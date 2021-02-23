@@ -42,8 +42,12 @@ V(mc$MSTtree)$size <- 6
 plot(mc$MSTtree, vertex.label.color="black", edge.color = 'black', edge.width=2,label.dist = 1)
 dev.off()
 
-### ----------------------------------
+
+
+
+### -----------------------------------------
 ### plot sample cluster-proportion on MSTtree
+### -----------------------------------------
 clu.tmp <- clu[grepl('GBM', names(clu))]
 sp <- sub('_.*', '', names(clu.tmp))
 prop <- sapply(seq(min(clu), max(clu)), function(i){
@@ -93,10 +97,9 @@ for (fea in setdiff(colnames(meta), c('study', 'age', 'MDSC','Mutation.Rate ')))
 }
     
 
-
-
 ### --------------------------------
 ### plot celltype marker genes score 
+### --------------------------------
 tb = read.table('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/doc/Marker_Gene_MouseCorticalLayer_Soraia.csv',header=T,sep=',',as.is=T, row.names = 1)
 tb = read.table('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/doc/Marker_Gene_Mouse_Soraia.csv',header=T,sep=',',as.is=T, row.names = 1)
 tb = read.table('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/doc/Marker_Gene_Human_Soraia.csv',header=T,sep=',',as.is=T, row.names = 1)
@@ -125,9 +128,9 @@ for (f in af){
   }
 }
   
-
 ### ----------------------------
 ### plot marker genes on MSTtree
+### ----------------------------
 plotMST <- function(mst, gene, geneByCellExpr, clu, vertex.label = clu){
   ## mst: an igraph object. For example, mc$MSTtree where mc is the result of TSCAN::exprmclust(mat).
   ## clu: a vector or length = num.cells. cell clusters.
@@ -154,6 +157,83 @@ for (i in seq(1,ncol(tb))){
   }
 }
 
+
+
+### --------------------------------
+### plot marker genes by study-sample-cluster mean
+### -----------------------------------------------
+meta = res@meta.data
+cid <- paste0(meta$study, ';', meta$Sample.ID, ';', meta$seurat_clusters)
+agg <- sapply(unique(cid),function(s) {
+  print(s)
+  rowMeans(as.matrix(data[,which(cid==s), drop=F]))
+})
+saveRDS(agg, '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/mouseGBM/integrate/harmony/36nonNormal_seuratGene/res/normalized_expr_for_study_sample_cluster.rds')
+
+
+## scale to [0,1] across clusters for study-sample
+cluid <- sapply(colnames(agg), function(i) strsplit(i, ';')[[1]][3])
+cid2 <- sapply(1:ncol(agg), function(i) sub(paste0(';',cluid[i]), '', colnames(agg)[i]))
+agg2 <- lapply(unique(cid2),function(s) {
+  print(s)
+  tmp <- as.matrix(agg[,which(cid2==s), drop=F])
+  tmp <- tmp - apply(tmp, 1, min)
+  rowm <- apply(tmp,1,max)
+  tmp <- tmp/rowm
+  tmp[is.na(tmp)] <- 0
+  tmp
+})
+
+agg2 <- do.call(cbind, agg2)
+
+## average cross study-sample for clusters
+cid3 <- sub('.*;', '', colnames(agg2))
+agg3 <- sapply(unique(cid3),function(s) {
+  print(s)
+  rowMeans(as.matrix(agg2[,which(cid3==s), drop=F]))
+}) 
+agg3 <- agg3[, order(as.numeric(colnames(agg3)))]
+saveRDS(agg3, '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/mouseGBM/integrate/harmony/36nonNormal_seuratGene/res/normalized_expr_for_study_sample.rds')
+
+
+
+tb = read.table('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/doc/Marker_Genes.csv',header=T,sep=',',as.is=T)
+library(gridExtra)
+mst <- mc$MSTtree
+for (i in seq(1,ncol(tb))){
+  print(i)
+  plist = list()
+  gvec = intersect(tb[,i], rownames(data))
+  for (g in gvec){
+    print(g)
+    png(paste0(pdir,paste0('MST_normexpr_',colnames(tb)[i],'_markerGene_',g,'.png')), width = 1800, height = 1800, res = 200)
+    V(mst)$color <- brewer.pal(9, 'Blues')[5]
+    V(mst)$size <- agg3[g, ] * 20
+    set.seed(12345)
+    plot(mst, vertex.label = ct.clu, vertex.label.color="black", edge.color = 'black', edge.width=2, main = g)
+    dev.off()
+  }
+}
+
+
+## infer pseudotime
+clu.start = 4
+ord <- TSCANorder(mclustobj = mc, 
+           startcluster = 4,
+           orderonly = T,
+           listbranch = T)
+saveRDS(ord, '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/mouseGBM/pseudotime/res/order_all.rds')
+
+# > names(ord)
+#  [1] "backbone 4,16,13,21,1,11,3" "branch: 4,5,19,25,23,9"    
+#  [3] "branch: 4,16,35,14"         "branch: 4,16,35,15"        
+#  [5] "branch: 4,16,13,21,1,12,18" "branch: 4,16,13,21,17,20"  
+#  [7] "branch: 4,5,2,24"           "branch: 4,5,26"            
+#  [9] "branch: 4,5,2,27"           "branch: 4,16,28"           
+# [11] "branch: 4,5,29"             "branch: 4,16,13,21,1,30"   
+# [13] "branch: 4,5,31"             "branch: 4,16,13,21,1,11,32"
+# [15] "branch: 4,5,33"             "branch: 4,5,19,22,7,8,34"  
+# [17] "branch: 4,5,6,36"           "branch: 4,10,37"   
 
 
 
