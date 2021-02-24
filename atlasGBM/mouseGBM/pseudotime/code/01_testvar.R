@@ -1,10 +1,10 @@
 library(here)
 setwd(here())
-f <- as.character(commandArgs(trailingOnly = T)[[1]][1])
+fd <- as.character(commandArgs(trailingOnly = T)[[1]])
+f <- as.character(commandArgs(trailingOnly = T)[[2]])
 print(f)
-
-ddir <- paste0('atlasGBM/mouseGBM/pseudotime/data/testvar/', f)
-rdir <- paste0('atlasGBM/mouseGBM/pseudotime/res/testvar/', f)
+ddir <- paste0('atlasGBM/mouseGBM/pseudotime/data/testvar/', fd, '/', f)
+rdir <- paste0('atlasGBM/mouseGBM/pseudotime/res/testvar/', fd, '/', f)
 dir.create(rdir, showWarnings = F, recursive = T)
 
 expr <- readRDS(paste0(ddir, '/expr.rds'))
@@ -15,6 +15,3 @@ design <- readRDS(paste0(ddir, '/design.rds'))
 source('/home-4/whou10@jhu.edu/scratch/Wenpin/trajectory_variability/function/01_function.R')
 res <- testpt(expr = expr, cellanno = cellanno, pseudotime = pseudotime, design = design, type = 'Variable')
 saveRDS(res, paste0(rdir, '/res.rds'))
-
-
-
