@@ -1,4 +1,4 @@
-library(here)
+ilibrary(here)
 setwd(here())
 library(Seurat)
 library(LaplacesDemon)
@@ -63,10 +63,13 @@ groupKLD <- function(group1, group2){
 
 featureKLD <- function(feature){
   aval = unique(as.character(meta[,feature]))
+  aval = aval[!is.na(aval)]
   m = sapply(aval, function(val1){
     sapply(aval, function(val2){
-      group1 <- rownames(meta[meta[, feature] == val1, , drop = FALSE])
-      group2 <- rownames(meta[meta[, feature] == val2, , drop = FALSE])
+      id1 <- meta[, feature] == val1
+      id2 <- meta[, feature] == val2
+      group1 <- rownames(meta[id1[!is.na(id1)], , drop = FALSE])
+      group2 <- rownames(meta[id2[!is.na(id2)], , drop = FALSE])
       groupKLD(group1,group2)      
     })
   })
@@ -108,15 +111,19 @@ for (traj in c('neuron', 'oligo','astrocyte')){
                    stringsAsFactors = F)
   pd <- pd[pd$sample %in% meta$study, ]
   pd[,feature] <- meta[match(pd$sample, meta$study), feature]
+  pd$sample <- factor(pd$sample, levels = unique(pd$sample)[order(meta[unique(pd$sample),feature])])
+  
   pdf(paste0(pdir,feature,'_time_distribution.pdf'), width = 6, height = 7)
-  ggplot(pd,aes_string(x=pd$pseudotime,fill=feature),alpha=0.5) + 
+  print(ggplot(pd,aes_string(x='pseudotime',fill=feature),alpha=0.5) + 
     geom_histogram() + 
     theme_classic() + 
     facet_wrap(~sample,scales = 'free_y',ncol=1,strip.position="right") + 
     theme(strip.text.y = element_text(angle = 0)) + 
           theme(axis.text=element_text(size=5))+
-          scale_fill_brewer(palette='Set2')
+          scale_fill_brewer(palette='Set2'))
   dev.off()
+  
+      
   
   ## plot each sample feature's significance heatmap (sig or insig)
   allfeat <- setdiff(colnames(meta), c('study', 'age', 'Pathology', 'Tumor.Grade', 'grade', 'Mutation.Rate'))
@@ -131,8 +138,28 @@ for (traj in c('neuron', 'oligo','astrocyte')){
       par(mar=c(7,4,4,2)+0.1)
       print(heatmap.2(x, margins=c(12,8)))
       dev.off()  
+      
+      pd <- data.frame(pseudotime = seq(1, length(pt)), 
+                   sample = sub('_.*', '', names(pt)),
+                   stringsAsFactors = F)
+      pd <- pd[pd$sample %in% meta$study, ]
+      pd[,feature] <- meta[match(pd$sample, meta$study), feature]
+      pd$sample <- factor(pd$sample, levels = unique(pd$sample)[order(meta[unique(pd$sample),feature])])
+      unifea <- unique(pd[,feature])
+      for (m in 1:(length(unifea)+1)){
+        for (n in (m+1):length(unifea)){
+          pdf(paste0(pdir,feature,'_time_distribution_',sub(' ', '', sub('/','',unifea[m])), '_',sub(' ', '', sub('/','',unifea[n])),'.pdf'), width = 5, height = 3)
+          print(ggplot(pd[pd[,feature] %in% c(unifea[m], unifea[n]), ],aes_string(x='pseudotime',color=feature, group='sample'),alpha=0.5) + 
+            geom_density() + 
+            theme_classic() + 
+            theme(strip.text.y = element_text(angle = 0)) + 
+                  theme(axis.text=element_text(size=5))+
+                  scale_color_brewer(palette='Set2'))
+          dev.off()
+        }
+      }
     }
   }
 }
 
-  
+    
