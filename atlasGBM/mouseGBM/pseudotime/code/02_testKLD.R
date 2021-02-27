@@ -1,4 +1,4 @@
-ilibrary(here)
+library(here)
 setwd(here())
 library(Seurat)
 library(LaplacesDemon)
@@ -162,4 +162,4 @@ for (traj in c('neuron', 'oligo','astrocyte')){
   }
 }
 
-    
+
