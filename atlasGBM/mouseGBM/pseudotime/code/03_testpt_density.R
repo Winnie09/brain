@@ -1,6 +1,10 @@
 library(here)
 setwd(here())
-
+traj <- as.character(commandArgs(trailingOnly = T)[[1]])
+i <- as.numeric(commandArgs(trailingOnly = T)[[2]])
+j <- as.numeric(commandArgs(trailingOnly = T)[[3]])
+print(i)
+print(j)
 meta <- readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/mouseGBM/integrate/harmony/36nonNormal_seuratGene/res/meta.data.rds')
 meta <- meta[grepl('GBM', meta$study), 6:31]
 meta <- meta[!duplicated(meta$study), ]
@@ -20,8 +24,6 @@ ord <- readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/mouseGBM/ps
 # [15] "branch: 4,5,33"             "branch: 4,5,19,22,7,8,34"  
 # [17] "branch: 4,5,6,36"           "branch: 4,10,37"   
 
-
-traj = 'neuron'
 if (traj == 'neuron') myord <- ord[[5]]
 if (traj == 'oligo') myord <- ord[[16]]
 if (traj == 'astrocyte') myord <- ord[[18]]
@@ -29,12 +31,10 @@ if (traj == 'astrocyte') myord <- ord[[18]]
 pt <- seq(1, length(myord))
 names(pt) <- myord
 ap <- sub('_.*', '', names(pt))
-
 loc <- unique(meta$Location)
-pdir <- '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/mouseGBM/pseudotime/plot/pt_neuron/'
+pdir <- paste0('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/mouseGBM/pseudotime/plot/pt_', traj, '/')
 
-rdir <- '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/mouseGBM/pseudotime/res/pt_neuron/'
-
+rdir <- paste0('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/mouseGBM/pseudotime/res/pt_', traj, '/')
 mat <- sapply(rownames(meta), function(p){
   v <- rep(0, length(myord))
   names(v) <- myord
@@ -43,20 +43,29 @@ mat <- sapply(rownames(meta), function(p){
 }) ## cell by sample
 mat.v <- as.vector(mat)  ## vectorize by columns
 names(mat.v) <- paste0(rep(colnames(mat), each = nrow(mat)), ';', rownames(mat))
-mat.m <- t(as.matrix(mat.v, nrow = 1))
-rownames(mat.m) <- 'cellprop'
-
-  
+mat.m <- rbind(mat.v, mat.v+1)
+rownames(mat.m) <- c('cellprop','cellpropFake')
 cellanno <- data.frame(Cell = names(mat.v), Sample = sub(';.*', '', names(mat.v)), stringsAsFactors = F)
 
 pseudotime = rep(pt, ncol(mat))
 names(pseudotime) <- colnames(mat.m)
 
-
-design = data.frame(intercept = 1, location = meta$Location, stringsAsFactors = F)
-rownames(design) <- rownames(meta)
-
 source('/home-4/whou10@jhu.edu/scratch/Wenpin/trajectory_variability/function/01_function.R')
 
-res <- testpt(expr = mat.m, cellanno = cellanno, pseudotime = pseudotime, design = design, type = 'Variable', ncores = 10)
-saveRDS(res, 'testpt_density_res.rds')
+group1 <- rownames(meta[meta$Location == loc[i], ])
+group2 <- rownames(meta[meta$Location == loc[j], ])
+ap.tmp <- c(group1, group2)
+mat.tmp <- mat.m[, cellanno[,2] %in% ap.tmp]
+
+cellanno.tmp <- cellanno[cellanno[,2] %in% ap.tmp, ]
+design = data.frame(intercept = 1, location = ifelse(ap.tmp %in% group1, 0, 1), stringsAsFactors = FALSE)
+rownames(design) <- ap.tmp
+design <- as.matrix(design)
+pt.tmp <- pseudotime[colnames(mat.tmp)]
+res <- testpt(expr = mat.tmp, cellanno = cellanno.tmp, pseudotime = pt.tmp, design = design, type = 'Variable', ncores = 2)
+dir.create(paste0(rdir, '/', loc[i],'_',loc[j]), recursive = T, showWarnings = F)
+saveRDS(res, paste0(rdir, '/', loc[i],'_',loc[j], '/testpt_density_res.rds'))
+
+# res <- testpt(expr = mat.tmp, cellanno = cellanno.tmp, pseudotime = pt.tmp, design = design, type = 'Variable', ncores = 2, permuiter = 3)
+# expr = mat.tmp; cellanno = cellanno.tmp; pseudotime = pt.tmp; design = design; type = 'Variable'; ncores = 1; permuiter = 3
+# EMmaxiter=100; EMitercutoff=1; verbose=F; ncores=detectCores(); test.pattern = 'overall'; test.position = 'all'; fit.resolution = 1000; return.all.data = TRUE; demean = FALSE

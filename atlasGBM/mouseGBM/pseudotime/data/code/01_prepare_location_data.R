@@ -1,5 +1,7 @@
 library(here)
 setwd(here())
+traj <- as.character(commandArgs(trailingOnly = T)[[1]])
+
 pdir <- '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/mouseGBM/pseudotime/plot/'
 
 library(Seurat)
@@ -32,23 +34,37 @@ path.oligo <- ord[[16]][grepl('GBM', ord[[16]])]
 path.astrocyte <- ord[[18]][grepl('GBM', ord[[18]])]
 loc <- unique(meta$Location)
 
+if (traj == 'pt_neuron') {
+  ptorder.all <- path.neuron
+  pseudotime.all <- seq(1, length(ord[[5]]))
+  names(pseudotime.all) <- ord[[5]]
+}
+if (traj == 'pt_oligo') {
+  ptorder.all <- path.oligo
+  pseudotime.all <- seq(1, length(ord[[16]]))
+  names(pseudotime.all) <- ord[[16]]
+}
+if (traj == 'pt_astrocyte') {
+  ptorder.all <- path.astrocyte
+  pseudotime.all <- seq(1, length(ord[[18]]))
+  names(pseudotime.all) <- ord[[18]]
+}
+
+  
 for (i in 1:3){
   print(i)
   for (j in (i+1):length(loc)){
     print(j)
-    rdir <- paste0('atlasGBM/mouseGBM/pseudotime/data/testvar/', loc[i], '_', loc[j])
+    rdir <- paste0('atlasGBM/mouseGBM/pseudotime/data/testvar/',traj,'/', loc[i], '_', loc[j])
     dir.create(rdir, recursive = T, showWarnings = F)
     print(rdir)
     ## specify path, and samples of two locations
-    ptorder <- path.neuron
-    ap = sub('_.*', '', ptorder)
-    ptorder <- ptorder[ap %in% meta$study[meta$Location %in% c(loc[i], loc[j])]]
+    ap = sub('_.*', '', ptorder.all)
+    ptorder <- ptorder.all[ap %in% meta$study[meta$Location %in% c(loc[i], loc[j])]]
     ## prepare data
     expr <- as.matrix(data[, ptorder])
     cellanno = data.frame(Cell = colnames(expr), Sample = sub('_.*', '', colnames(expr)), stringsAsFactors = FALSE)
-    pseudotime <- seq(1, length(ord[[5]]))
-    names(pseudotime) <- ord[[5]]
-    pseudotime <- pseudotime[names(pseudotime) %in% colnames(expr)]
+    pseudotime <- pseudotime.all[names(pseudotime.all) %in% colnames(expr)]
     design = data.frame(intercept = 1, location = ifelse(meta[as.character(unique(cellanno[,2])), 'Location'] == loc[i], 0, 1), stringsAsFactors = F)
     rownames(design) <- unique(cellanno[,2])
     design <- as.matrix(design)
@@ -59,4 +75,6 @@ for (i in 1:3){
     saveRDS(design, paste0(rdir, '/design.rds'))
   }
 }
+
+
 
