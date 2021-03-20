@@ -32,9 +32,9 @@ pt <- seq(1, length(myord))
 names(pt) <- myord
 ap <- sub('_.*', '', names(pt))
 loc <- unique(meta$Location)
-pdir <- paste0('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/mouseGBM/pseudotime/plot/pt_', traj, '/')
+rdir <- paste0('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/mouseGBM/pseudotime/res/testDensity/pt_', traj, '/', loc[i],'_',loc[j])
+dir.create(rdir, showWarnings = F, recursive = T)
 
-rdir <- paste0('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/mouseGBM/pseudotime/res/pt_', traj, '/')
 mat <- sapply(rownames(meta), function(p){
   v <- rep(0, length(myord))
   names(v) <- myord
@@ -63,9 +63,9 @@ rownames(design) <- ap.tmp
 design <- as.matrix(design)
 pt.tmp <- pseudotime[colnames(mat.tmp)]
 res <- testpt(expr = mat.tmp, cellanno = cellanno.tmp, pseudotime = pt.tmp, design = design, type = 'Variable', ncores = 2)
-dir.create(paste0(rdir, '/', loc[i],'_',loc[j]), recursive = T, showWarnings = F)
-saveRDS(res, paste0(rdir, '/', loc[i],'_',loc[j], '/testpt_density_res.rds'))
+saveRDS(res, paste0(rdir, '/testpt_density_res.rds'))
 
 # res <- testpt(expr = mat.tmp, cellanno = cellanno.tmp, pseudotime = pt.tmp, design = design, type = 'Variable', ncores = 2, permuiter = 3)
 # expr = mat.tmp; cellanno = cellanno.tmp; pseudotime = pt.tmp; design = design; type = 'Variable'; ncores = 1; permuiter = 3
 # EMmaxiter=100; EMitercutoff=1; verbose=F; ncores=detectCores(); test.pattern = 'overall'; test.position = 'all'; fit.resolution = 1000; return.all.data = TRUE; demean = FALSE
+
