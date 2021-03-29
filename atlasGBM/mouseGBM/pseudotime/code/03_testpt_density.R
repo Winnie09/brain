@@ -3,6 +3,7 @@ setwd(here())
 traj <- as.character(commandArgs(trailingOnly = T)[[1]])
 i <- as.numeric(commandArgs(trailingOnly = T)[[2]])
 j <- as.numeric(commandArgs(trailingOnly = T)[[3]])
+print(traj)
 print(i)
 print(j)
 meta <- readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/mouseGBM/integrate/harmony/36nonNormal_seuratGene/res/meta.data.rds')
@@ -62,10 +63,11 @@ design = data.frame(intercept = 1, location = ifelse(ap.tmp %in% group1, 0, 1), 
 rownames(design) <- ap.tmp
 design <- as.matrix(design)
 pt.tmp <- pseudotime[colnames(mat.tmp)]
-res <- testpt(expr = mat.tmp, cellanno = cellanno.tmp, pseudotime = pt.tmp, design = design, type = 'Variable', ncores = 2)
+res <- testpt(expr = mat.tmp, cellanno = cellanno.tmp, pseudotime = pt.tmp, design = design, test.type = 'Variable', ncores = 4)
 saveRDS(res, paste0(rdir, '/testpt_density_res.rds'))
 
 # res <- testpt(expr = mat.tmp, cellanno = cellanno.tmp, pseudotime = pt.tmp, design = design, type = 'Variable', ncores = 2, permuiter = 3)
 # expr = mat.tmp; cellanno = cellanno.tmp; pseudotime = pt.tmp; design = design; type = 'Variable'; ncores = 1; permuiter = 3
 # EMmaxiter=100; EMitercutoff=1; verbose=F; ncores=detectCores(); test.pattern = 'overall'; test.position = 'all'; fit.resolution = 1000; return.all.data = TRUE; demean = FALSE
+
 
