@@ -29,8 +29,7 @@ res <- sapply(alltraj, function(traj){
     }
   })  
 })
-
-res <- do.call(cbind, res)
 dir.create('atlasGBM/mouseGBM/pseudotime/res/testvar_saver_pm/perf/', showWarnings = F, recursive = T)
 saveRDS(res, 'atlasGBM/mouseGBM/pseudotime/res/testvar_saver_pm/perf/number_of_diffgene.rds')
 write.csv(res, 'atlasGBM/mouseGBM/pseudotime/res/testvar_saver_pm/perf/number_of_diffgene.csv')
+
