@@ -75,10 +75,11 @@ for (i in colnames(tb)){
 }
 
 
-png(paste0(pdir, 'GBM_NatNeuPaper_marker.png'), width = 3300, height = 1000, res = 200)
-p1 <- FeaturePlot(ser,  features = c('SOX2', 'NES', 'PPP1R17', 'BCL11B'), reduction = 'umap')
-p2 <- FeaturePlot(ser,  features = c('SOX2', 'NES', 'PPP1R17', 'BCL11B'), reduction = 'ref.umap')
-p1 + p2
+png(paste0(pdir, 'GBM_NatNeuPaper_marker.png'), width = 1200, height = 1000, res = 200)
+FeaturePlot(ser,  features = c('SOX2', 'NES', 'PPP1R17', 'BCL11B'), reduction = 'umap')
+dev.off()
+png(paste0(pdir, 'GBM_NatNeuPaper_marker_refumap.png'), width = 1200, height = 1000, res = 200)
+FeaturePlot(ser,  features = c('SOX2', 'NES', 'PPP1R17', 'BCL11B'), reduction = 'ref.umap')
 dev.off()
 
 png(paste0(pdir, 'ref_NatNeuPaper_marker.png'), width = 1200, height = 1000, res = 200)
