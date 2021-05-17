@@ -43,17 +43,13 @@ gbm <- readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/int
 
 expr <- gbm$RNA@data
 pat <- gbm@meta.data$orig.ident
+clu <- Idents(gbm)
 gbmpb <- sapply(unique(pat),function(i) {
- rowMeans(expr[,pat==i])
+  tmp <- expr[,pat==i]
+  rowMeans(sapply(unique(clu[colnames(tmp)]),function(j) {
+    rowMeans(tmp[,clu[colnames(tmp)]==j,drop=F]) ##   
+  }))
 })
+colnames(gbmpb) <- as.character(unique(pat))
 saveRDS(gbmpb, paste0(rdir, 'gbm_pb.rds'))
-
-
-## CCA coefficient
-library(CCA)
-int <- intersect(rownames(mouseatlaspb),rownames(gbmpb))
-res <- cc(mouseatlaspb[int,],gbmpb[int,])
-
-
-
 
