@@ -59,7 +59,6 @@ allscore <- do.call(cbind,lapply(names(allres), function(p){
   res
 }))
 
-
 ave <- rowMeans(sapply(dlist, function(i){
   rowMeans(i)
 }))
@@ -79,21 +78,32 @@ factorscore <- apply(allscore,2,function(i) {
 })
 saveRDS(factorscore, '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/nmf/res/factorscore.rds')
 
-
 ## cluster factor pathways
 library(pheatmap)
 hclu <- cutree(hclust(as.dist(1-cor(factorscore))),k = 4)
 
 overallgenepathway <- sapply(1:max(hclu),function(i) {
   tmpclu <- names(hclu)[hclu==i]
-  
   names(sort(rowMeans(allscore[,tmpclu,drop=F]), decreasing = T)[1:30])
 }) 
 saveRDS(overallgenepathway, '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/nmf/res/overallgenepathway.rds')
+write.csv(overallgenepathway, '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/nmf/plot/overallgenepathway.csv')
 
+
+source('/home-4/whou10@jhu.edu/scratch/Wenpin/resource/myfunc/myGO.R')
+goRes <- lapply(1:ncol(overallgenepathway), function(i) myGO(diffgene = overallgenepathway[,i], allgene = rownames(allres[[1]]@fit@W), species = 'human'))
+names(goRes) <- paste0('pathway', 1:ncol(overallgenepathway))
+
+
+source('/home-4/whou10@jhu.edu/scratch/Wenpin/trajectory_variability/function/plotGOEnrich.R')
+library(data.table)
+library(ggplot2)
+pdf('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/nmf/plot/overallgenepathway_GO.pdf', width = 12, height = 7)
+plotGOEnrich(goRes = goRes, n = 10, sortByFDR = TRUE, fdr.cutoff = 0.05, fc.cutoff = 2)
+dev.off()
+
+  
 factorscore = factorscore[, names(sort(hclu))]
-
-
 library(RColorBrewer)
 png('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/nmf/plot/factorscore_select.png', width = 1500, height = 1500, res = 100)
 mycolor <- colorRampPalette(rev(brewer.pal(n = 7, name = "RdBu")))(100)
