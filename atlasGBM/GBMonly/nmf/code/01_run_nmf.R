@@ -65,15 +65,21 @@ ave <- rowMeans(sapply(dlist, function(i){
 genegroup <- cut(ave, quantile(ave,seq(0,1,length.out=26)),include.lowest = T)
 names(genegroup) <- names(ave)
 
+# ## use QC genes
+# keep <- readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/filtergenelist/keep.rds')
+# int <- intersect(rownames(allscore), keep)
+# allscore <- allscore[int, , drop =F]
+## 
+
 factorscore <- apply(allscore,2,function(i) {
   gs <- names(sort(i, decreasing = T)[1:30])
-  
   gcont <- as.vector(sapply(gs, function(g){
     group <- genegroup[g]
     set.seed(12345)
     sample(names(genegroup[genegroup == group]), 100, replace = F)
   }))
-  unlist(lapply(names(allres),function(n) colMeans(dlist[[n]][gs,] - rowMeans(dlist[[n]][gs,])) - colMeans(dlist[[n]][gcont,])))
+  unlist(lapply(names(allres),function(n) colMeans(dlist[[n]][gs,]) - colMeans(dlist[[n]][gcont,])))
+  #unlist(lapply(names(allres),function(n) colMeans(dlist[[n]][gs,] - rowMeans(dlist[[n]][gs,])) - colMeans(dlist[[n]][gcont,] - rowMeans(dlist[[n]][gcont,]))))
 })
 saveRDS(factorscore, '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/nmf/res/factorscore.rds')
 
@@ -97,6 +103,7 @@ saveRDS(goRes, '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/nmf
 for (i in 1:length(goRes)){
   tmp <- goRes[[i]]
   tmp <- tmp[tmp[,'FDR'] < 0.05, ]
+  print(dim(tmp))
   write.csv(tmp, paste0('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/nmf/plot/GO_pathway.', i, 'csv'))
 }
 
@@ -104,8 +111,8 @@ for (i in 1:length(goRes)){
 source('/home-4/whou10@jhu.edu/scratch/Wenpin/trajectory_variability/function/plotGOEnrich.R')
 library(data.table)
 library(ggplot2)
-pdf('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/nmf/plot/overallgenepathway_GO.pdf', width = 12, height = 7)
-plotGOEnrich(goRes = goRes, n = 10, sortByFDR = TRUE, fdr.cutoff = 0.05, fc.cutoff = 2)
+pdf('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/nmf/plot/overallgenepathway_GO.pdf', width = 12, height = 10)
+plotGOEnrich(goRes = goRes, n = 15, sortByFDR = TRUE, fdr.cutoff = 0.05, fc.cutoff = 2)
 dev.off()
 
 
@@ -121,9 +128,9 @@ allp <- sub('_.*', '', co)
 
 
 library(RColorBrewer)
-png('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/nmf/plot/factorscore_select.png', width = 1500, height = 1300, res = 100)
-mycolor <- colorRampPalette(c('darkblue', 'blue', 'skyblue','white','pink','red','red3'))(100)
-pheatmap(t(factorscore), scale = 'none', show_rownames = T, show_colnames = F, cluster_cols = F, cluster_rows = F, color = mycolor, gaps_row = cumsum(rle(sort(hclu))$lengths), gaps_col = cumsum(rle(allp)$lengths))
+png('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/nmf/plot/factorscore_select.png', width = 2000, height = 1300, res = 100)
+mycolor <- colorRampPalette(c('darkblue', 'blue', 'skyblue','cyan','white','pink','red','red2','red3'))(100)
+pheatmap(t(factorscore), scale = 'row', show_rownames = T, show_colnames = F, cluster_cols = F, cluster_rows = F, color = mycolor, gaps_row = cumsum(rle(sort(hclu))$lengths), gaps_col = cumsum(rle(allp)$lengths))
 dev.off()
 
 
