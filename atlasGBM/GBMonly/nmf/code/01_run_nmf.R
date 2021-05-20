@@ -73,8 +73,7 @@ factorscore <- apply(allscore,2,function(i) {
     set.seed(12345)
     sample(names(genegroup[genegroup == group]), 100, replace = F)
   }))
-  unlist(lapply(names(allres),function(n) colMeans(dlist[[n]][gs,]) - colMeans(dlist[[n]][gcont,])))
-  
+  unlist(lapply(names(allres),function(n) colMeans(dlist[[n]][gs,] - rowMeans(dlist[[n]][gs,])) - colMeans(dlist[[n]][gcont,])))
 })
 saveRDS(factorscore, '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/nmf/res/factorscore.rds')
 
@@ -109,14 +108,24 @@ pdf('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/nmf/plot/overa
 plotGOEnrich(goRes = goRes, n = 10, sortByFDR = TRUE, fdr.cutoff = 0.05, fc.cutoff = 2)
 dev.off()
 
-factorscore = factorscore[, names(sort(hclu))]
-library(RColorBrewer)
 
-png('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/nmf/plot/factorscore_select.png', width = 1500, height = 1500, res = 100)
-mycolor <- colorRampPalette(rev(brewer.pal(n = 7, name = "RdBu")))(100)
-mycolor <- c(rep(mycolor[1],30), rep(mycolor[1:30],each = 10), mycolor[31:69], rep(mycolor[70:99], each = 10), rep(mycolor[length(mycolor)], 30))
-pheatmap(t(factorscore), scale = 'row', show_rownames = T, show_colnames = F, cluster_cols = F, cluster_rows = F, color = mycolor)
+## ====================================
+co1 <- readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cellcellcor/res/cellorder_Frontal.rds')
+co2 <- readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cellcellcor/res/cellorder_Occipital.rds')
+co3 <- readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cellcellcor/res/cellorder_Parietal.rds')
+co4 <- readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cellcellcor/res/cellorder_Temporal.rds')
+co = c(co1, co2, co3, co4)
+factorscore = factorscore[co, names(sort(hclu))]
+
+allp <- sub('_.*', '', co)
+
+
+library(RColorBrewer)
+png('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/nmf/plot/factorscore_select.png', width = 1500, height = 1300, res = 100)
+mycolor <- colorRampPalette(c('darkblue', 'blue', 'skyblue','white','pink','red','red3'))(100)
+pheatmap(t(factorscore), scale = 'none', show_rownames = T, show_colnames = F, cluster_cols = F, cluster_rows = F, color = mycolor, gaps_row = cumsum(rle(sort(hclu))$lengths), gaps_col = cumsum(rle(allp)$lengths))
 dev.off()
+
 
 
 
