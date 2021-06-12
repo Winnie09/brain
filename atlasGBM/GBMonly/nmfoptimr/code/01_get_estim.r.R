@@ -46,13 +46,13 @@ mat <- mat[rowSums(mat) > 0, ]
 mat <- mat - rowMeans(mat) ## centered expression
 mat[mat < 0]  <-  0  ## convert negatives to zero
 # res <- nmf(mat, num.nmf, seed = 12345) ## manually set num.nmf = 4
-if(requireNamespace("Biobase", quietly=TRUE)){
-  # perform 10 runs for each value of r in range 2:6
-  estim.r <- nmf(mat, 2:6, nrun=30, seed=123456)
-  pdf(paste0('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/nmfoptimr/plot/estim.r_', p, '.pdf'))
-  plot(estim.r)
-  dev.off()
-}
+suppressMessages(library("Biobase"))
+# perform 10 runs for each value of r in range 2:6
+estim.r <- nmf(mat, 2:6, nrun=30, seed=123456)
+pdf(paste0('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/nmfoptimr/plot/estim.r_', p, '.pdf'))
+plot(estim.r)
+dev.off()
 saveRDS(estim.r, paste0(rdir, 'estim.r_', p, '.rds'))
+
 
 
