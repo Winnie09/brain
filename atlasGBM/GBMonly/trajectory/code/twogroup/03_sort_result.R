@@ -3,7 +3,7 @@ library(here)
 setwd(here())
 source('/home-4/whou10@jhu.edu/scratch/Wenpin/trajectory_variability/function/01_function.R')
 ddir = '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/trajectory/res/twogroup/'
-i = 1
+i = as.numeric(commandArgs(trailingOnly = T)[[1]])
 comp = sub('.rds', '', list.files(ddir, pattern = '.rds'))[i]
 ## "Frontal_Occipital": frontal 1, occipital 0 (higher expression)
 pdir <- paste0('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/trajectory/plot/twogroup/', comp, '/')
@@ -47,18 +47,18 @@ res <- res[order(res[,2], -res[,4]), ]
 res <- cbind(res, DDGType = DDGType[rownames(res)])
 write.csv(res, paste0(pdir, 'differential_genes.csv'))
 
-## -----------------------
-## plotClusterMeanAndDiff
-## -----------------------
-pdf(paste0(pdir, 'cluster_mean_and_diff.pdf'), width = 3.8, height = 7.5)
-print(plotClusterMeanAndDiff(Res, cluster = Res$cluster))
-dev.off()
+# ## -----------------------
+# ## plotClusterMeanAndDiff
+# ## -----------------------
+# pdf(paste0(pdir, 'cluster_mean_and_diff.pdf'), width = 3.8, height = 7.5)
+# print(plotClusterMeanAndDiff(Res, cluster = Res$cluster))
+# dev.off()
 
 ## -----------
 ## GO analysis
 ## -----------
 goRes <- GOEnrich(testobj = Res, type = 'variable')  
-saveRDS(goRes, paste0(pdir, '/goRes.rds'))
+# saveRDS(goRes, paste0(pdir, '/goRes.rds'))
 
 nn <- sapply(names(goRes), function(i){
   tmp <- goRes[[i]]
