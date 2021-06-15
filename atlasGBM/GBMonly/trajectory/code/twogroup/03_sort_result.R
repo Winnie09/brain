@@ -78,7 +78,8 @@ png(paste0(pdir, 'DiffFitHm5_rownames.png'),width = 12000,height = 3500,res = 30
 plotDiffFitHm5(Res, showRowName = T, cellWidthTotal = 230, cellHeightTotal = length(Res$cluster) * 10, sep = ':.*' , subsampleCell = FALSE, break.0 = FALSE)
 dev.off()  
 
-pdf(paste0(pdir, 'DiffFitHm5_rownames.pdf'),width = 30,height = 12)
+pdf(paste0(pdir, 'DiffFitHm5_rownames.pdf'),width = 50,height = 10)
 plotDiffFitHm5(Res, showRowName = T, cellWidthTotal = 230, cellHeightTotal = length(Res$cluster) * 10, sep = ':.*' , subsampleCell = FALSE, break.0 = FALSE)
 dev.off()
+
 
