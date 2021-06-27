@@ -97,7 +97,7 @@ clu <- cutree(as.hclust(d),10)
 pdf(paste0(pdir, 'GBM049.pdf'), width = 5, height = 7)
 plot(d, tip.color=clu, cex = 0.5)
 dev.off()
-#list[['GBM049']] <- names(clu)[which(clu %in% c(1:8))]  ## select non-malignant cells
+list[['GBM049']] <- NA  ## select non-malignant cells, mild mutations
 
 d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_allenreference/GBM050/cutoff0.1/output/infercnv.observations_dendrogram.txt')
 clu <- cutree(as.hclust(d),10)
@@ -115,10 +115,10 @@ list[['GBM051']] <- NA  ## select non-malignant cells
 
 d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_allenreference/GBM052/cutoff0.1/output/infercnv.observations_dendrogram.txt')
 clu <- cutree(as.hclust(d),10)
-pdf(paste0(pdir, 'GBM052.odf'), width = 5, height = 7)
+pdf(paste0(pdir, 'GBM052.pdf'), width = 5, height = 7)
 plot(d, tip.color=clu, cex = 0.5)
 dev.off()
-#list[['GBM052']] <- names(clu)[which(clu %in% setdiff(1:10, 1:2))]  ## select non-malignant cells
+list[['GBM052']] <- NA  ## select non-malignant cells
 
 
 d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_allenreference/GBM054/cutoff0.1/output/infercnv.observations_dendrogram.txt')
@@ -267,6 +267,8 @@ list[['GBM087']] <- NULL  ## select non-malignant cells
 rdir <- '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_allenreference/res/'
 dir.create(rdir)
 saveRDS(list, paste0(rdir, 'nonmaglinant_cells.rds'))
+
+
 
 
 
