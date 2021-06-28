@@ -288,14 +288,12 @@ myclu = rep(1, length(clu))
 names(myclu) =  names(clu)
 saveRDS(myclu, paste0(rdir, p, '.rds'))
 
-
 p = 'GBM073'
 d <- read.tree(paste0(ddir,p, '/cutoff0.1/output/infercnv.observations_dendrogram.txt'))
 clu <- cutree(as.hclust(d),10)
 myclu = rep(1, length(clu))
 names(myclu) =  names(clu)
 saveRDS(myclu, paste0(rdir, p, '.rds'))
-
 
 p = 'GBM074'
 d <- read.tree(paste0(ddir,p, '/cutoff0.1/output/infercnv.observations_dendrogram.txt'))
@@ -306,7 +304,6 @@ myclu = rep(1:2, c(length(group1), length(group2)))
 names(myclu) =  c(group1, group2)
 saveRDS(myclu, paste0(rdir, p, '.rds'))
 
-
 p = 'GBM075'
 d <- read.tree(paste0(ddir,p, '/cutoff0.1/output/infercnv.observations_dendrogram.txt'))
 clu <- cutree(as.hclust(d),10)
@@ -316,7 +313,6 @@ myclu = rep(1:2, c(length(group1), length(group2)))
 names(myclu) =  c(group1, group2)
 saveRDS(myclu, paste0(rdir, p, '.rds'))
 
-
 p = 'GBM081'
 d <- read.tree(paste0(ddir,p, '/cutoff0.1/output/infercnv.observations_dendrogram.txt'))
 clu <- cutree(as.hclust(d),10)
@@ -324,6 +320,14 @@ myclu = rep(1, length(clu))
 names(myclu) =  names(clu)
 saveRDS(myclu, paste0(rdir, p, '.rds'))
 
+p = 'GBM082'
+d <- read.tree(paste0(ddir,p, '/cutoff0.1/output/infercnv.observations_dendrogram.txt'))
+clu <- cutree(as.hclust(d),10)
+group1 = names(clu)[which(clu %in% c(6:7))]
+group2 = setdiff(names(clu), group1)
+myclu = rep(1:2, c(length(group1), length(group2)))
+names(myclu) =  c(group1, group2)
+saveRDS(myclu, paste0(rdir, p, '.rds'))
 
 p = 'GBM087'
 d <- read.tree(paste0(ddir,p, '/cutoff0.1/output/infercnv.observations_dendrogram.txt'))
@@ -333,4 +337,5 @@ group2 = setdiff(names(clu), group1)
 myclu = rep(1:2, c(length(group1), length(group2)))
 names(myclu) =  c(group1, group2)
 saveRDS(myclu, paste0(rdir, p, '.rds'))
+
 
