@@ -38,9 +38,9 @@ for (f in allf){
                   cluster_columns = FALSE,
                   show_row_names = F,
                   show_column_names = T,
-                  col = colorRampPalette(brewer.pal(n = 8, name ="Set1"))(length(unique(mat[,1]))))
+                  col = colorRampPalette(brewer.pal(n = 8, name ="Set1"))(length(unique(mat[,1]))+5)[-c(2,4,9,13,14)])
     htlist <- ht1 + ht2 
-    pdf(paste0(pdir, p, '.pdf'), width = 5.5, height = 3.3)
+    pdf(paste0(pdir, p, '.pdf'), width = 5.3, height = 3.3)
     draw(htlist, merge_legend = FALSE,annotation_legend_side = "right",heatmap_legend_side = "right")
     dev.off()
   }
