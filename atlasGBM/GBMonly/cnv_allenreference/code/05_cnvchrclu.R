@@ -76,10 +76,13 @@ saveRDS(myclu, paste0(rdir, p, '.rds'))
 p = 'GBM036'
 d <- read.tree(paste0(ddir,p, '/cutoff0.1/output/infercnv.observations_dendrogram.txt'))
 clu <- cutree(as.hclust(d),10)
-group1 = names(clu)[which(clu %in% c(1:2))]
-group2 = setdiff(names(clu), group1)
-myclu = rep(1:2, c(length(group1), length(group2)))
-names(myclu) =  c(group1, group2)
+group1 = names(clu)[which(clu %in% c(7))]
+group2 = names(clu)[which(clu %in% c(8))]
+group3 = names(clu)[which(clu %in% c(1:2))]
+group4 = names(clu)[which(clu %in% c(3:4))]
+group5 = setdiff(names(clu), c(group1, group2, group3, group4))
+myclu = rep(1:5, c(length(group1), length(group2), length(group3), length(group4), length(group5)))
+names(myclu) =  c(group1, group2, group3, group4, group5)
 saveRDS(myclu, paste0(rdir, p, '.rds'))
 
 
