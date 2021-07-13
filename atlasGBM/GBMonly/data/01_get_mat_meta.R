@@ -41,6 +41,6 @@ dlist = list()
 for (i in unique(as)){
   dlist[[i]] <- mat[, as == i]
 }
-saveRDS(dlist, 'atlasGBM/GBMonly/data/6Normal_combined_log2norm_dlist.rds')
+saveRDS(dlist, '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/data/6Normal_combined_log2norm_dlist.rds')
 
 
