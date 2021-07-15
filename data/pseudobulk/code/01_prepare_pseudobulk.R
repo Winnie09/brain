@@ -53,3 +53,30 @@ gbmpb <- sapply(unique(pat),function(i) {
 colnames(gbmpb) <- as.character(unique(pat))
 saveRDS(gbmpb, paste0(rdir, 'gbm_pb.rds'))
 
+## =====================
+## human cortex atlas
+## ===================
+library(Seurat)
+tb = read.csv('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatlascortex/integrate/seurat/seuratGene2000/diff/celltype_annotation.csv', as.is = T)
+
+
+atlas <- readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatlascortex/integrate/seurat/seuratGene2000/res/humanAtlas_harmony.rds')
+
+
+expr = atlas@assays$RNA@counts
+actide = as.numeric(atlas@active.ident)-1
+n = names(atlas@active.ident)
+ct = tb[match(actide, tb[,1]),2]
+names(ct) = n
+saveRDS(ct, '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatlascortex/integrate/seurat/seuratGene2000/res/celltype.rds')
+
+identical(names(ct), colnames(expr))
+summary(expr[,1])
+summary(expr[1,])
+range(expr)
+
+atlaspb <- sapply(unique(ct),function(i) {
+ rowMeans(expr[,ct==i])
+})
+saveRDS(atlaspb, paste0(rdir, 'humancortexatlas_pb.rds'))
+
