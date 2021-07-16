@@ -44,5 +44,13 @@ tmp <- tab[,'10']
 names(tmp) <- sploc
 tmp
 
+## save a pvalue table with samples marked locations
 tab2 = cbind(sploc, tab)
 write.csv(tab2, paste0(rdir, 'GBM_predicted_cellproportion_cluster10morecells_with_loc.csv'))
+
+## write log of this analysis
+sink(paste0(rdir, 'GBM_predicted_cellprop_conclusion.txt'))
+print('Only Occipital have significant (one-side t.test p.value < 0.05) less cell proportion in cluster 10 and 13')
+print('No locations have significant (one-side t.test p.value < 0.05) more cell proportion in any clusters')
+print('Only Temporal have (one-side t.test p.value < 0.1) more cell proportion in cluster 19')
+sink()
