@@ -1,6 +1,3 @@
-
-
-
 library(Seurat)
 library(ggplot2)
 library(pheatmap)
@@ -8,9 +5,10 @@ d <- readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatlascor
 
 gl <- read.csv('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatlascortex/integrate/plot/gl/Marker_Gene_Tim.csv',as.is=T)
 #gl2 <- read.csv('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatlascortex/plot/gl/Marker_Gene_Human_Soraia.csv',as.is=T)
-
 gl2 <- c('DLX1','DLX2','CALR','NELL1','SOX2','PAX6','EOMES','NEUROD1')
 
+
+## within each dataset (study) and cluster, scale the data
 clu <- Idents(d)
 n <- names(clu)
 clu <- as.character(clu)
@@ -27,7 +25,6 @@ acm <- sapply(unique(stu),function(i) {
   colnames(cm) <- paste0(i,'_',unique(tmpclu))
   cm
 })
-
 acm <- do.call(cbind,acm)
 
 clu <- sub('.*_','',colnames(acm))
@@ -58,7 +55,8 @@ dev.off()
 
 ## marker set 2
 gl3 <- toupper(c('Sfrp1', 'Rbfox1', 'Hopx', 'Fam107a', 'Tnc', 'Nhlh1', 'Nhlh2', 'Tp53i11', 'Sla1c3', 'Ppp1r17', 'Ttf1', 'Dlx1', 'Ptprc', 'P2ry12', 'Olig1', 'Col20a1', 'Pmp2', 'Neurod2', 'Slco1c1', 'Pde4dip', 'Aqp4'))
-gv <- intersect(rownames(acm),unique(c(gl2,unlist(gl))))
+# gv <- intersect(rownames(acm),unique(c(gl3,unlist(gl))))
+gv <- intersect(rownames(acm),gl3)
 cm <- acm[gv,]
 clu <- sub('.*_','',colnames(cm))
 ccm <- sapply(unique(clu),function(i) {
@@ -102,6 +100,7 @@ tab <- tab/rowSums(tab)
 pdf('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatlascortex/integrate/plot/plot/dev_prop.pdf')
 pheatmap(tab)
 dev.off()
+
 
 
 
