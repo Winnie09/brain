@@ -7,6 +7,6 @@ samp <- unique(sub('_.*','',cell))
 clusub <- clu[patient %in% samp]
 t1 <- table(clusub[names(clusub) %in% cell])
 t2 <- table(clusub)
-t1/t2[names(t1)]
+sort(t1/t2[names(t1)])
 
 
