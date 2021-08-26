@@ -4,7 +4,7 @@ library(ape)
 ap = list.files('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/summary/', pattern = 'GBM')
 ap = sub('.png', '', ap)
 
-for (p in ap){
+for (p in setdiff(ap, 'GBM069')){
   print(p)
   d <- read.tree(paste0('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/', p,'/cutoff0.1/output/infercnv.observations_dendrogram.txt'))
   clu <- cutree(as.hclust(d),10)
@@ -13,6 +13,14 @@ for (p in ap){
   dev.off()
 }
   
+
+d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM069/cutoff0.1/output/infercnv.observations_dendrogram.txt')
+clu <- cutree(as.hclust(d),15)
+pdf(paste0(pdir, 'GBM069.pdf'), width = 5, height = 7)
+print(plot(d, tip.color=clu, cex = 0.5))
+dev.off()
+
+###########
 list <- list()
 d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_allenreference/GBM006/cutoff0.1/output/infercnv.observations_dendrogram.txt')
 clu <- cutree(as.hclust(d),10)
@@ -135,9 +143,12 @@ clu <- cutree(as.hclust(d),10)
 list[['GBM068']] <- names(clu)[which(clu %in% c(5,6))]  ## select non-malignant cells
 # 
 # ## difficult ! half of cluster 10 seems to be normal
-# d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM069/cutoff0.1/output/infercnv.observations_dendrogram.txt')
-# clu <- cutree(as.hclust(d),10)
-# list[['GBM069']] <- names(clu)[which(clu %in% c(9))]  ## select non-malignant cells
+d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM069/cutoff0.1/output/infercnv.observations_dendrogram.txt')
+clu <- cutree(as.hclust(d),15)
+pdf(paste0(pdir, 'GBM069.pdf'), width = 5, height = 7)
+print(plot(d, tip.color=clu, cex = 0.5))
+dev.off()
+list[['GBM069']] <- names(clu)[which(clu %in% c(14))]  ## select non-malignant cells
 # 
 # 
 d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM070/cutoff0.1/output/infercnv.observations_dendrogram.txt')
@@ -181,5 +192,4 @@ list[['GBM087']] <- NULL  ## This sample is super wiered
 rdir <- '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/res/'
 dir.create(rdir)
 saveRDS(list, paste0(rdir, 'nonmaglinant_cells.rds'))
-
 
