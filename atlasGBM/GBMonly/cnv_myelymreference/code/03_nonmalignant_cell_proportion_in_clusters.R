@@ -7,6 +7,6 @@ samp <- unique(sub('_.*','',cell))
 clusub <- clu[patient %in% samp]
 t1 <- table(clusub[names(clusub) %in% cell])
 t2 <- table(clusub)
-sort(t1/t2[names(t1)])
-
+res = sort(t1/t2[names(t1)])
+write.csv(res, '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/res/nonmalignant_cell_proportion_in_clusters.csv')
 
