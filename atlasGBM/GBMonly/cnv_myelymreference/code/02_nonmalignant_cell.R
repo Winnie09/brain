@@ -4,7 +4,7 @@ library(ape)
 ap = list.files('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/summary/', pattern = 'GBM')
 ap = sub('.png', '', ap)
 
-for (p in setdiff(ap, 'GBM069')){
+for (p in setdiff(ap, c('GBM069', 'GBM074'))){
   print(p)
   d <- read.tree(paste0('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/', p,'/cutoff0.1/output/infercnv.observations_dendrogram.txt'))
   clu <- cutree(as.hclust(d),10)
@@ -17,7 +17,13 @@ for (p in setdiff(ap, 'GBM069')){
 d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM069/cutoff0.1/output/infercnv.observations_dendrogram.txt')
 clu <- cutree(as.hclust(d),15)
 pdf(paste0(pdir, 'GBM069.pdf'), width = 5, height = 7)
-print(plot(d, tip.color=clu, cex = 0.5))
+plot(d, tip.color=clu, cex = 0.5)
+dev.off()
+
+d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM074/cutoff0.1/output/infercnv.observations_dendrogram.txt')
+clu <- cutree(as.hclust(d),20)
+pdf(paste0(pdir, 'GBM074.pdf'), width = 5, height = 7)
+plot(d, tip.color=clu, cex = 0.5)
 dev.off()
 
 ###########
@@ -82,12 +88,12 @@ d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv
 clu <- cutree(as.hclust(d),10)
 list[['GBM049']] <- names(clu)[which(clu %in% c(3))]  ## select non-malignant cells, mild mutations
 # 
-# d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM050/cutoff0.1/output/infercnv.observations_dendrogram.txt')
-# clu <- cutree(as.hclust(d),10)
-# pdf(paste0(pdir, 'GBM050.pdf'), width = 5, height = 7)
-# plot(d, tip.color=clu, cex = 0.5)
-# dev.off()
-# list[['GBM050']] <- NA  ## select non-malignant cells
+d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM050/cutoff0.1/output/infercnv.observations_dendrogram.txt')
+clu <- cutree(as.hclust(d),10)
+pdf(paste0(pdir, 'GBM050.pdf'), width = 5, height = 7)
+plot(d, tip.color=clu, cex = 0.5)
+dev.off()
+list[['GBM050']] <- names(clu)[which(clu %in% c(6))] 
 # 
 d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM051/cutoff0.1/output/infercnv.observations_dendrogram.txt')
 clu <- cutree(as.hclust(d),10)
@@ -106,10 +112,17 @@ d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv
 clu <- cutree(as.hclust(d),10)
 list[['GBM055']] <- names(clu)[which(clu %in% c(10))]  ## select non-malignant cells
 
-# d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM056/cutoff0.1/output/infercnv.observations_dendrogram.txt')
-# clu <- cutree(as.hclust(d),10)
-# list[['GBM056']] <- names(clu)[which(clu %in% c(6))]  ## select non-malignant cells
-# 
+d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM056/cutoff0.1/output/infercnv.observations_dendrogram.txt')
+clu <- cutree(as.hclust(d),10)
+list[['GBM056']] <- names(clu)[which(clu %in% c(3,4))]
+
+### new
+d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM057/cutoff0.1/output/infercnv.observations_dendrogram.txt')
+clu <- cutree(as.hclust(d),10)
+list[['GBM057']] <- names(clu)[which(clu %in% c(6))]  ## select non-malignant cells
+
+
+
 d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM059/cutoff0.1/output/infercnv.observations_dendrogram.txt')
 clu <- cutree(as.hclust(d),10)
 list[['GBM059']] <- names(clu)[which(clu %in% c(8,9))]  ## select non-malignant cells
@@ -126,13 +139,13 @@ list[['GBM062']] <- NA
 
 d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM064/cutoff0.1/output/infercnv.observations_dendrogram.txt')
 clu <- cutree(as.hclust(d),10)
-list[['GBM064']] <- NULL
+list[['GBM064']] <- NA
 
 
 
 d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM065/cutoff0.1/output/infercnv.observations_dendrogram.txt')
 clu <- cutree(as.hclust(d),10)
-list[['GBM065']] <- NULL
+list[['GBM065']] <- NA
 # 
 d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM066/cutoff0.1/output/infercnv.observations_dendrogram.txt')
 clu <- cutree(as.hclust(d),10)
@@ -146,7 +159,7 @@ list[['GBM068']] <- names(clu)[which(clu %in% c(5,6))]  ## select non-malignant 
 d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM069/cutoff0.1/output/infercnv.observations_dendrogram.txt')
 clu <- cutree(as.hclust(d),15)
 pdf(paste0(pdir, 'GBM069.pdf'), width = 5, height = 7)
-print(plot(d, tip.color=clu, cex = 0.5))
+plot(d, tip.color=clu, cex = 0.5)
 dev.off()
 list[['GBM069']] <- names(clu)[which(clu %in% c(14))]  ## select non-malignant cells
 # 
@@ -155,19 +168,19 @@ d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv
 clu <- cutree(as.hclust(d),10)
 list[['GBM070']] <- names(clu)[which(clu %in% c(2))]  ## select non-malignant cells
 # 
-# ## s/p immunotherapy
-# d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM071/cutoff0.1/output/infercnv.observations_dendrogram.txt')
-# clu <- cutree(as.hclust(d),10)
-# list[['GBM071']] <- NULL  ## select non-malignant cells
+## s/p immunotherapy
+d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM071/cutoff0.1/output/infercnv.observations_dendrogram.txt')
+clu <- cutree(as.hclust(d),10)
+list[['GBM071']] <- NA  ## select non-malignant cells
 # 
-# d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM073/cutoff0.1/output/infercnv.observations_dendrogram.txt')
-# clu <- cutree(as.hclust(d),10)
-# list[['GBM073']] <- NULL  ## select non-malignant cells
+d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM073/cutoff0.1/output/infercnv.observations_dendrogram.txt')
+clu <- cutree(as.hclust(d),10)
+list[['GBM073']] <- NA  ## select non-malignant cells
 # 
 # 
-# d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM074/cutoff0.1/output/infercnv.observations_dendrogram.txt')
-# clu <- cutree(as.hclust(d),10)
-# list[['GBM074']] <- NULL ## select non-malignant cells
+d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM074/cutoff0.1/output/infercnv.observations_dendrogram.txt')
+clu <- cutree(as.hclust(d),20)
+list[['GBM074']] <- names(clu)[which(clu %in% c(17:20))]
 # 
 d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM075/cutoff0.1/output/infercnv.observations_dendrogram.txt')
 clu <- cutree(as.hclust(d),10)
@@ -186,10 +199,11 @@ list[['GBM082']] <- names(clu)[which(clu %in% c(8))]
 ## s/p immunotherapy
 d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM087/cutoff0.1/output/infercnv.observations_dendrogram.txt')
 clu <- cutree(as.hclust(d),10)
-list[['GBM087']] <- NULL  ## This sample is super wiered
+list[['GBM087']] <- NA  ## This sample is super wiered
 
 
 rdir <- '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/res/'
 dir.create(rdir)
 saveRDS(list, paste0(rdir, 'nonmaglinant_cells.rds'))
+
 
