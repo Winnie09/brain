@@ -57,7 +57,7 @@ saveRDS(gbmpb, paste0(rdir, 'gbm_pb.rds'))
 ## human cortex atlas
 ## ===================
 library(Seurat)
-tb = read.csv('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/doc/humancortexatlas_celltype_annotation.csv', as.is = T, header = F)
+tb = read.csv('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/doc/humancortexatlas_celltype_annotation.csv', as.is = T)
 
 
 atlas <- readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatlascortex/integrate/seurat/seuratGene2000/res/humanAtlas_harmony.rds')
@@ -66,7 +66,7 @@ atlas <- readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatla
 expr = atlas@assays$RNA@counts
 actide = as.numeric(atlas@active.ident)-1
 n = names(atlas@active.ident)
-ct = tb[match(actide, tb[,1]),2]
+ct = tb[match(actide, tb[,1]),3]
 names(ct) = n
 saveRDS(ct, '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatlascortex/integrate/seurat/seuratGene2000/res/celltype.rds')
 
@@ -78,6 +78,8 @@ range(expr)
 atlaspb <- sapply(unique(ct),function(i) {
  rowMeans(expr[,ct==i])
 })
-saveRDS(atlaspb, paste0(rdir, 'humancortexatlas_pb.rds'))
+saveRDS(atlaspb, '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/data/pseudobulk/data/humancortexatlas_pb.rds')
+
+
 
 
