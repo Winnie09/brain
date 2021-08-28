@@ -57,7 +57,7 @@ saveRDS(gbmpb, paste0(rdir, 'gbm_pb.rds'))
 ## human cortex atlas
 ## ===================
 library(Seurat)
-tb = read.csv('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatlascortex/integrate/seurat/seuratGene2000/diff/celltype_annotation.csv', as.is = T)
+tb = read.csv('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/doc/humancortexatlas_celltype_annotation.csv', as.is = T, header = F)
 
 
 atlas <- readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatlascortex/integrate/seurat/seuratGene2000/res/humanAtlas_harmony.rds')
@@ -79,4 +79,5 @@ atlaspb <- sapply(unique(ct),function(i) {
  rowMeans(expr[,ct==i])
 })
 saveRDS(atlaspb, paste0(rdir, 'humancortexatlas_pb.rds'))
+
 
