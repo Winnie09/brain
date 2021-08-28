@@ -3,7 +3,9 @@ library(ggplot2)
 library(pheatmap)
 d <- readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatlascortex/integrate/seurat/seuratGene2000/res/humanAtlas_harmony.rds')
 
-gl <- read.csv('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatlascortex/integrate/plot/gl/Marker_Gene_Tim.csv',as.is=T)
+d@active.ident = factor(as.numeric(d@active.ident), levels = seq(1,length(unique(d@active.ident))))
+
+gl <- read.csv('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatlascortex/integrate/gl/Marker_Gene_Tim.csv',as.is=T)
 #gl2 <- read.csv('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatlascortex/plot/gl/Marker_Gene_Human_Soraia.csv',as.is=T)
 gl2 <- c('DLX1','DLX2','CALR','NELL1','SOX2','PAX6','EOMES','NEUROD1')
 
@@ -37,7 +39,7 @@ fcgl <- sapply(colnames(accm),function(i) {
   names(head(sort(accm[,i]-rowMeans(accm[,colnames(accm)!=i]),decreasing = T),5))
 })
 
-pdf('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatlascortex/integrate/plot/plot/fc.pdf',height=20)
+pdf('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatlascortex/integrate/seurat/seuratGene2000/plot/fc.pdf',height=20)
 pheatmap(accm[as.vector(fcgl),],cluster_rows = F,cluster_cols = F,gaps_row = 5*(1:ncol(accm)))
 dev.off()
 
@@ -49,7 +51,7 @@ ccm <- sapply(unique(clu),function(i) {
   rowMeans(cm[,clu==i],na.rm=T)
 })
 
-pdf('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatlascortex/integrate/plot/plot/marker.pdf')
+pdf('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatlascortex/integrate/seurat/seuratGene2000/plot/marker.pdf')
 pheatmap(ccm)
 dev.off()
 
@@ -68,7 +70,7 @@ dev.off()
 
 
 ## plot UMAP
-pdf('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatlascortex/integrate/plot/plot/cluster_umap.pdf')
+pdf('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatlascortex/integrate/seurat/seuratGene2000/plot/cluster_umap.pdf')
 DimPlot(d,label=T) + theme(legend.position='none')
 dev.off()
 
@@ -100,6 +102,7 @@ tab <- tab/rowSums(tab)
 pdf('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/humanatlascortex/integrate/plot/plot/dev_prop.pdf')
 pheatmap(tab)
 dev.off()
+
 
 
 
