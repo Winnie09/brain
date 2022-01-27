@@ -1,5 +1,6 @@
 pdir <- '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/dend_cluster/'
 dir.create(pdir)
+cludir <- '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/cnvclu/'
 library(ape)
 ap = list.files('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/summary/', pattern = 'GBM')
 ap = sub('.png', '', ap)
@@ -8,6 +9,7 @@ for (p in setdiff(ap, c('GBM069', 'GBM074'))){
   print(p)
   d <- read.tree(paste0('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/', p,'/cutoff0.1/output/infercnv.observations_dendrogram.txt'))
   clu <- cutree(as.hclust(d),10)
+  saveRDS(clu, paste0(cludir, p, '.rds'))
   pdf(paste0(pdir, p, '.pdf'), width = 5, height = 7)
   print(plot(d, tip.color=clu, cex = 0.5))
   dev.off()
@@ -16,12 +18,14 @@ for (p in setdiff(ap, c('GBM069', 'GBM074'))){
 
 d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM069/cutoff0.1/output/infercnv.observations_dendrogram.txt')
 clu <- cutree(as.hclust(d),15)
+saveRDS(clu, paste0(cludir, 'GBM069.rds'))
 pdf(paste0(pdir, 'GBM069.pdf'), width = 5, height = 7)
 plot(d, tip.color=clu, cex = 0.5)
 dev.off()
 
 d <- read.tree('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/GBM074/cutoff0.1/output/infercnv.observations_dendrogram.txt')
 clu <- cutree(as.hclust(d),20)
+saveRDS(clu, paste0(cludir, 'GBM074.rds'))
 pdf(paste0(pdir, 'GBM074.pdf'), width = 5, height = 7)
 plot(d, tip.color=clu, cex = 0.5)
 dev.off()
@@ -205,5 +209,6 @@ list[['GBM087']] <- NA  ## This sample is super wiered
 rdir <- '/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnv_myelymreference/res/'
 dir.create(rdir)
 saveRDS(list, paste0(rdir, 'nonmaglinant_cells.rds'))
+
 
 
