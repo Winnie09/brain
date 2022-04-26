@@ -1,6 +1,10 @@
 d = readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnvsel/cnv/summary/summary.rds')
 ap = sub('_.*', '', names(d))
 library(igraph)
+
+meta = read.csv('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/doc/metas_20200329.csv', row.names = 1)
+meta = meta[unique(ap),]
+
 for (cutoff in c(0.01, 0.05)){
   print(cutoff)
   for (p in unique(ap)){
@@ -50,9 +54,10 @@ for (cutoff in c(0.01, 0.05)){
     names(col) = rownames(mat)
     g <- graph_from_data_frame(eglist,vertices=data.frame(vertices=names(col),color=col),directed = T)
     pdf(paste0(pdir, 'cnvtree/', p, '_cnvtree.pdf'), width = 8, height = 8)
-    print(plot(g))
+    print(plot(g, main = paste0(p, ';', meta[p, 'Pathology'], ';Grade', meta[p, 'Tumor.Grade'], ';', meta[p, 'Treatment'])))
     dev.off()
   }
 }
+
 
 
