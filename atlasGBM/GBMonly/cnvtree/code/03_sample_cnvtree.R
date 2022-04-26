@@ -42,15 +42,17 @@ for (cutoff in c(0.01, 0.05)){
     }))
     
     eglist <- data.frame(rownames(mat)[egfinal[,1]],rownames(mat)[egfinal[,2]])
+    saveRDS(list(eglist = eglist, mat = mat), paste0(pdir, 'cnvtree_adjacentMatrix_and_cnvPatternMatrix/', p, '_cnvtree_adjacentMatrix_and_cnvPatternMatrix.rds'))
     oranges <- colorRampPalette(c("dark red", "gold"))
     len = rowSums(mat)
     col = oranges(max(len)+1)
     col = col[len+1]
     names(col) = rownames(mat)
     g <- graph_from_data_frame(eglist,vertices=data.frame(vertices=names(col),color=col),directed = T)
-    pdf(paste0(pdir, p, '.pdf'), width = 8, height = 8)
+    pdf(paste0(pdir, 'cnvtree/', p, '_cnvtree.pdf'), width = 8, height = 8)
     print(plot(g))
     dev.off()
   }
 }
+
 
