@@ -1,0 +1,7 @@
+library(ggplot2)
+u <- readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/integrate/seurat/36nonNormalSeuratGene2000/res/umap_embeddings.rds')
+d <- readRDS(paste0('/home-4/whou10@jhu.edu/work-zfs/whou10/GBM/data/proc/tumor/doublet/doublet.rds'))  
+d <- unlist(d)
+pdf('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/integrate/seurat/36nonNormalSeuratGene2000/plot/doublet.pdf')
+ggplot(data.frame(u1=u[,1],u2=u[,2],type=rownames(u) %in% d),aes(x=u1,y=u2,col=type)) + geom_point(size=0.1,alpha=0.4) + theme_classic()
+dev.off()
