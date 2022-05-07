@@ -1,0 +1,6 @@
+data <- readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/integrate/seurat/36nonNormalSeuratGene2000/res/filtertumordlist.rds')
+data <- do.call(cbind,data)
+cm <- rowMeans(data)
+csd <- sqrt((rowMeans(data*data) - cm^2) / (ncol(data) - 1) * ncol(data))
+l <- list(mean=cm,sd=csd)
+saveRDS(l,file='/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/integrate/seurat/36nonNormalSeuratGene2000/res/filtertumordlist_meansd.rds')
