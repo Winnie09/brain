@@ -14,7 +14,7 @@ dir.create(paste0('atlasGBM/GBMonly/cnv_myelymreference/',p,'/cutoff', cut, '/ou
 infercnv_obj = CreateInfercnvObject(raw_counts_matrix=paste0('atlasGBM/GBMonly/cnv_myelymreference/data/data/36nonNormal_myelym_combined_',p, '_countmatrix.txt'),
                                     annotations_file=paste0('atlasGBM/GBMonly/cnv_myelymreference/data/data/36nonNormal_myelym_combined_', p, '_cellanno.txt'),
                                     delim="\t",
-                                    gene_order_file='atlasGBM/GBMonly/cnv_myelymreference/data/data/36nonNormal_myelym_combined_gr.txt',
+                                    gene_order_file='atlasGBM/GBMonly/cnv_myelymreference_with_doublet/data/data/36nonNormal_myelym_combined_gr.txt',
                                     ref_group_names=unique(anno[!grepl('cluster', anno[,2]),2]))
 infercnv_obj = infercnv::run(infercnv_obj,
                              cutoff=cut, # cutoff=1 works well for Smart-seq2, and cutoff=0.1 works well for 10x Genomics
@@ -22,6 +22,7 @@ infercnv_obj = infercnv::run(infercnv_obj,
                              cluster_by_groups=FALSE, 
                              denoise=TRUE,
                              HMM=FALSE)
+
 
 
 
