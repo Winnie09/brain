@@ -1,4 +1,4 @@
-d = readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnvsel/cnv/summary/summary.rds')
+d = readRDS('/home-4/whou10@jhu.edu/scratch/Wenpin/brain/atlasGBM/GBMonly/cnvsel/cnv_old20220223/cnv/summary/summary.rds')
 ap = sub('_.*', '', names(d))
 library(igraph)
 
@@ -52,12 +52,22 @@ for (cutoff in c(0.01, 0.05)){
     col = oranges(max(len)+1)
     col = col[len+1]
     names(col) = rownames(mat)
-    g <- graph_from_data_frame(eglist,vertices=data.frame(vertices=names(col),color=col),directed = T)
-    pdf(paste0(pdir, 'cnvtree/', p, '_cnvtree.pdf'), width = 8, height = 8)
+    g <- graph_from_data_frame(eglist,vertices=data.frame(vertices=names(col),color=col, size = tab[names(col)]),directed = T)
+    pdf(paste0(pdir, 'cnvtree/', p, '_cnvtree.pdf'), width = 5, height = 4)
     print(plot(g, main = paste0(p, ';', meta[p, 'Pathology'], ';Grade', meta[p, 'Tumor.Grade'], ';', meta[p, 'Treatment'])))
+    dev.off()
+    
+    dir.create(paste0(pdir, 'cnvtree_nodeSize/'), recursive = T, showWarnings = F)
+    pdf(paste0(pdir, 'cnvtree_nodeSize/', p, '_cnvtree.pdf'), width = 5, height = 4)
+    mysize = tab[names(col)]
+    mysize = mysize - min(mysize)
+    mysize = 50*mysize/(max(mysize) - min(mysize))
+    print(plot(g, main = paste0(p, ';', meta[p, 'Pathology'], ';Grade', meta[p, 'Tumor.Grade'], ';', meta[p, 'Treatment']), vertex.size = mysize))
     dev.off()
   }
 }
+
+
 
 
 
